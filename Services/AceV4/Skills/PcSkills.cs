@@ -180,7 +180,7 @@ namespace Nimbus.AceV4
             var m = t.Match(@"^(?:close|quit|exit|kill|end|shut down|stop running)\s+(.+)$");
             if (!m.Success) return Task.FromResult<AceAnswer?>(null);
             string target = StripTail(m.Groups[1].Value);
-            if (Regex.IsMatch(target, @"^(nimbus|ace|yourself|you)$")) return Task.FromResult<AceAnswer?>(AceAnswer.Say("I can't close myself from here, but you can close Nimbus from its tray icon.", "apps"));
+            if (Regex.IsMatch(target, @"^(nimbus|ace|yourself|you)$")) return Task.FromResult<AceAnswer?>(AceAnswer.Say("I can't close myself from here, but you can close my window with the X at the top right.", "apps"));
             if (Regex.IsMatch(target, @"^(all|everything|all (my )?(apps|windows|programs))$"))
             {
                 var all = WindowControl.TopWindows();
@@ -572,7 +572,7 @@ namespace Nimbus.AceV4
                 text = $"CPU is at {s.Cpu:0}%. " + (top.Count > 0 ? $"Busiest: {Composer.List(top.Take(3).Select(x => $"{x.Name} ({x.Percent:0}%)").ToList())}." : "");
             }
             else if (t.Has(@"\btemp"))
-                text = s.CpuTemp.HasValue ? $"CPU is {s.CpuTemp:0}°C{(s.GpuTemp.HasValue ? $" and the GPU is {s.GpuTemp:0}°C" : "")}." + (s.CpuTemp >= 85 ? " That's hot." : " That's fine.") : "I can't read temperatures. Run Nimbus as admin to turn the sensors on.";
+                text = s.CpuTemp.HasValue ? $"CPU is {s.CpuTemp:0}°C{(s.GpuTemp.HasValue ? $" and the GPU is {s.GpuTemp:0}°C" : "")}." + (s.CpuTemp >= 85 ? " That's hot." : " That's fine.") : "I can't read temperatures. Run Ace as admin to turn the sensors on.";
             else if (problems.Count == 0)
                 text = Composer.Pick("pc.ok", new[] { "Your PC's doing great. CPU {0}%, RAM {1}%.", "All good! CPU's at {0}% and RAM's at {1}%.", "Running smooth: {0}% CPU, {1}% RAM." })
                     .Replace("{0}", s.Cpu.ToString("0")).Replace("{1}", s.MemPercent.ToString("0"));

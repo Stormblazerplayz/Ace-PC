@@ -35,6 +35,8 @@ namespace Nimbus.AceV4
             new("screentime", R(@"\bscreen ?time\b|\bhow (?:long|much time) (?:have|did) i (?:been )?(?:on|using|use|used|play|played|playing|spen[dt](?: on)?) (?:my |the )?(?!for\b|with\b|outside\b)\w+|\bhow long have i been on (?:my |the )?(?:computer|pc|laptop)\b|^(?:limit|cap) .+ (?:to|at) (?:\d+|an?|one|two|three|four|five|half) .*(?:hours?|minutes?|mins?)|\btime limits?\b|\bapp limits?\b"), ScreenTimeAsync),
             new("translate", R(@"\btranslat|\bhow (?:do|would|can|should) (?:you|i|we) say\b|\bhow to say\b|^say .+ in [a-z]+$|^what (?:does|do) .+ mean\b|\b(?:" + LangPattern + @") (?:word|phrase|way to say|for)\b|\bin (?:" + LangPattern + @")\??$|\bin english\??$"), TranslateAsync),
             new("update", R(@"^(?:(?:please |can you |could you |go |hey ace,? )?(?:check for|look for|get|install|download|find) (?:any |an |the |a )?(?:new )?(?:ace )?(?:updates?|new version|newest version|latest version)|^(?:update|upgrade) (?:yourself|ace|nimbus|you)\b|^(?:are there|is there|any) (?:any )?(?:new )?(?:updates?|new versions?)\b|^(?:what|which) version (?:are you|is (?:this|ace|nimbus))\b|^what'?s your version\b|^are you up to date\b|^(?:is )?(?:ace|nimbus) up to date\b)"), UpdateAsync),
+            new("whatsnew", R(@"^(?:what'?s|whats|what is) new(?: (?:in|with) (?:this|the|ace|you|nimbus|your)(?: (?:update|version|ace))?| (?:in|with) (?:the |this )?(?:update|version|new version|latest version))?\??$|^(?:show|tell) me (?:the |your )?(?:update|patch|release) notes\??$|^(?:the )?(?:patch|update|release) notes\??$|^(?:the )?change ?log\??$|^what (?:changed|did you change|got updated|did the update (?:change|add))(?: in (?:this|the|your) (?:update|version))?\??$|^what'?s (?:in|new in) (?:the|this|your) (?:update|version|new version)\??$"), WhatsNewAsync),
+            new("update.beta", R(@"^(?:please |can you |could you )?(?:turn on|turn off|switch on|switch off|enable|disable|join|leave|quit|get|stop getting|opt (?:in|out)(?: of| to| for)?|sign me up for|i want)(?: the| ace| ace'?s)? beta(?: updates?| versions?| channel| builds?| testing| program)?$|^(?:use|switch to|go back to)(?: the)? (?:stable|normal|regular)(?: updates?| versions?| channel)$|^(?:am i|are you|is ace) (?:on|in|getting) (?:the )?beta(?: updates?| channel| versions?)?\??$"), BetaAsync),
             new("script.explain", R(@"^(?:can you |could you |would you |will you |please |pls |now )?(?:explain|break down|walk me through|go through|go over|help me understand)\b|^what does (?:this|that|the|it|each|every|line \d+|this line|that line)\b.*\bdo\??$|^how does (?:this|that|the|it)\b.*\bwork\??$|^what (?:is|does|'?s) (?:on |in |happening (?:on|in) )?line \d+\b|^i don'?t (?:get|understand) (?:this|that|it|the)\b(?!.*\b(?:joke|question|answer|recipe)\b)"), ScriptExplainAsync),
             new("script", R(@"\b(?:scripts?|lua|luau|cpp|arduino|unreal|sketch|code|coding)\b|\bc\+\+|\broblox\b"), ScriptAsync),
         };
@@ -320,6 +322,61 @@ namespace Nimbus.AceV4
             Step("Checking GitHub for a new version", AutoUpdater.Repo);
             string said = await CheckForUpdates(CancellationToken.None).ConfigureAwait(false);
             return AceAnswer.Say(said, "update");
+        }
+
+        private Task<AceAnswer?> WhatsNewAsync(Turn t)
+        {
+            string from = AutoUpdater.JustUpdatedFrom;
+            return Task.FromResult<AceAnswer?>(WhatsNewAnswer(from, AutoUpdater.CurrentText));
+        }
+
+        /// <summary>
+        /// "What's new" as an answer with a card: every version since from (after an update), or just this version's
+        /// notes when from is empty.
+        /// </summary>
+        public AceAnswer WhatsNewAnswer(string from, string current)
+        {
+            var groups = from.Length > 0
+                ? WhatsNew.Between(from, current)
+                : new List<(Version Version, string Name, List<WhatsNewNote> Notes)>();
+            if (groups.Count == 0)
+            {
+                var notes = WhatsNew.For(current);
+                if (notes.Count == 0) return AceAnswer.Say($"I'm on version {current}. I don't have any notes for this version.", "update", 0.8);
+                groups.Add((AutoUpdater.ParseVersion(current)!, current, notes));
+                from = "";
+            }
+            string text = from.Length > 0
+                ? $"I just updated from {from} to {current}! Here's what's new."
+                : $"Here's what's new in Ace {current}.";
+            var a = AceAnswer.Say(text, "update");
+            foreach (var g in groups.Take(3))
+            {
+                var card = new ResultsCard { Title = "New in " + g.Name };
+                foreach (var n in g.Notes.Take(10)) card.Items.Add(new ResultItem { Title = n.Title, Subtitle = n.Text });
+                a.Cards.Add(card);
+            }
+            var first = groups[0].Notes.Take(2).Select(n => n.Title).Where(x => x.Length > 0).ToList();
+            a.Speak = text + (first.Count > 0 ? " " + string.Join(". ", first) + "." : "");
+            a.Mood = "love";
+            return a;
+        }
+
+        private Task<AceAnswer?> BetaAsync(Turn t)
+        {
+            if (t.Has(@"^(?:am i|are you|is ace)\b"))
+                return Task.FromResult<AceAnswer?>(AceAnswer.Say(Config.BetaChannel
+                    ? "Yes, you get beta updates. They come out first but might have bugs. Say \"turn off beta\" to go back."
+                    : "No, you get the normal updates. Say \"turn on beta updates\" to get new stuff first.", "update"));
+            bool on = !t.Has(@"\b(?:turn off|switch off|disable|leave|quit|stop getting|opt out|stable|normal|regular)\b");
+            if (Config.BetaChannel == on)
+                return Task.FromResult<AceAnswer?>(AceAnswer.Say(on ? "Beta updates are already on." : "Beta updates are already off.", "update"));
+            Config.BetaChannel = on;
+            Config.Save();
+            Step(on ? "Turned on beta updates" : "Turned off beta updates");
+            return Task.FromResult<AceAnswer?>(AceAnswer.Say(on
+                ? "Done! You'll get beta versions as soon as they're out. They might have a few bugs, but I keep a backup in case one breaks."
+                : "Okay, back to the normal updates. You'll keep this version until the next normal one comes out.", "update"));
         }
 
         // ===================================================== Trivia high scores
@@ -899,7 +956,7 @@ namespace Nimbus.AceV4
                 var week = ScreenTime.Week(now);
                 var total = TimeSpan.FromSeconds(week.Sum(d => d.Total.TotalSeconds));
                 int days = week.Count(d => d.Total > TimeSpan.Zero);
-                if (days == 0) return Task.FromResult<AceAnswer?>(Card(AceAnswer.Say("I haven't counted any screen time this week yet. I count while Nimbus is running.", "screentime", 0.7)));
+                if (days == 0) return Task.FromResult<AceAnswer?>(Card(AceAnswer.Say("I haven't counted any screen time this week yet. I count while Ace is running.", "screentime", 0.7)));
                 var avg = TimeSpan.FromSeconds(total.TotalSeconds / days);
                 return Task.FromResult<AceAnswer?>(Card(AceAnswer.Say($"This week you've used your PC for {ScreenTime.Span(total)}, about {ScreenTime.Span(avg)} a day.", "screentime")));
             }
@@ -919,7 +976,7 @@ namespace Nimbus.AceV4
             var today = ScreenTime.Total(now);
             AceAnswer ans;
             if (today < TimeSpan.FromMinutes(1))
-                ans = AceAnswer.Say("I haven't counted any screen time yet today. I count the time you're actively using your PC while Nimbus is running.", "screentime", 0.7);
+                ans = AceAnswer.Say("I haven't counted any screen time yet today. I count the time you're actively using your PC while Ace is running.", "screentime", 0.7);
             else
             {
                 string top = day.Count > 0 ? $" Most of it was {day[0].App} ({ScreenTime.Span(TimeSpan.FromSeconds(day[0].Seconds))})." : "";

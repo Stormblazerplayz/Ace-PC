@@ -1,0 +1,25 @@
+ACE FOR PC: START HERE
+======================
+
+1. Move this whole folder somewhere it can stay, like:
+      C:\Users\<you>\AppData\Local\Programs\Ace
+   (Keep Ace.exe, NimbusUpdater.exe and the Data folder together.)
+
+2. Double-click Ace.exe. That's it. You don't need to install .NET.
+   If Windows says "Windows protected your PC", click "More info" then "Run anyway".
+   (It shows that for apps that aren't signed by a big company.)
+
+3. Optional, once: right-click Setup-AceV4.ps1 and pick "Run with PowerShell".
+   It downloads Ace's meaning net (about 90 MB) so Ace understands more ways of asking.
+
+4. Optional: right-click Ace.exe > Show more options > Pin to Start (or Send to > Desktop)
+   so it's easy to open.
+
+HOW TO USE ACE
+- Type in "Talk to Ace" at the bottom and press Enter.
+- Click the orb for Settings (pick Normal Ace or LFM3 Omni, updates, voice and more).
+- Hold the orb to talk, or press Ctrl+Alt+Space anywhere, or say "Hey Ace" (turn it on in Settings).
+- The calendar button is left of the orb, "check my PC" is right of it.
+
+Ace updates itself from GitHub (Settings > Updates). Your saved stuff is in
+%LOCALAPPDATA%\Nimbus and is never touched by updates.

@@ -167,6 +167,7 @@ namespace Nimbus.Overlay
             switch (e.Kind)
             {
                 case StageKind.Wake:
+                    if (AceRuntime.Current.PageVisible) return;   // the Ace window is open and in front: its orb shows it
                     _current = null;
                     _answerHost.Children.Clear();
                     _answerScroll.Visibility = Visibility.Collapsed;

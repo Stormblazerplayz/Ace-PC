@@ -277,6 +277,13 @@ namespace Nimbus.AceV4
         private async Task<AceAnswer> AskCoreAsync(string raw, CancellationToken ct, bool spoken)
         {
             string text = Normalize(raw);
+            // A trivia answer goes straight to the game, before typo fixing and splitting, so answers like
+            // "J.K. Rowling", "T. rex" or "Mauna Kea" aren't split up or "fixed" into other words.
+            if (Talk.Trivia is { Over: false, Current: not null } trivia && text.Length > 0 && trivia.ChoiceOf(text) != null)
+            {
+                var tt = new Turn { Text = text, Lower = text.ToLowerInvariant(), Ct = ct, Spoken = spoken };
+                if (await TriviaAnswerAsync(tt).ConfigureAwait(false) is { } ta) return ta;
+            }
             var (spelled, fixes) = Speller.Fix(text);
             if (fixes.Count > 0)
             {
@@ -399,9 +406,16 @@ namespace Nimbus.AceV4
             if (everyUnit != null) return everyUnit;
 
             // Rules: clear commands go straight to their skill.
+            // "What is RAM?" or "how do I take a screenshot?" asks for a fact, not a PC check or a screenshot search.
+            bool factAsk = FactAsk.IsMatch(turn.Lower) && !Regex.IsMatch(turn.Lower, @"\b(my|mine|me|this pc|this computer)\b");
             foreach (var rule in Rules)
             {
                 if (!rule.Pattern.IsMatch(turn.Lower)) continue;
+                if (factAsk && LookupRules.Contains(rule.Intent) && Bank.Search(turn.Text, 1).FirstOrDefault() is { } fact && fact.Score >= HighScore)
+                {
+                    Step("My notes know this one", $"\"{Short(fact.MatchedQuestion, 50)}\" {fact.Score:0.00}");
+                    continue;
+                }
                 Step("Matched a rule", rule.Intent);
                 if (DryRunActions && !RealInDryRun.Contains(rule.Intent)) { Routes.Add(rule.Intent); return Done(AceAnswer.Say("[dry run] " + rule.Intent, rule.Intent)); }
                 var got = await rule.Run(turn).ConfigureAwait(false);
@@ -442,15 +456,20 @@ namespace Nimbus.AceV4
         /// <summary>Skills that only touch Ace's own lists and answers, so tests run them for real.</summary>
         private static readonly HashSet<string> RealInDryRun = new()
         {
-            "correct", "recipe", "cook", "homework", "translate", "trivia", "twentyq", "notes", "shopping", "memory.list", "memory.clear",
-            "remember", "forget", "convert.all", "currency", "reminder", "reminder.list", "reminder.cancel", "script", "script.explain", "trivia.scores",
+            "correct", "recipe", "cook", "homework", "translate", "trivia", "twentyq", "notes", "shopping", "memory.list", "memory.clear", "whatsnew",
+            "remember", "remember.tell", "forget", "convert.all", "currency", "reminder", "reminder.list", "reminder.cancel", "script", "script.explain", "trivia.scores",
         };
+
+        /// <summary>Rules that look things up on the PC; a fact question about the same words goes to the notes instead.</summary>
+        private static readonly HashSet<string> LookupRules = new() { "system.status", "screenshot.search", "storage" };
+
+        private static readonly Regex FactAsk = new(@"^(what (does|do|is|are)\b|what'?s (a|an|the)\b|whats (a|an|the)\b|how (do|can|would|should) (i|you|we)\b|how to\b|is (a|an|the)?\s*\w+ the same\b|difference between\b|explain\b|define\b)", RegexOptions.Compiled);
 
         private static readonly HashSet<string> ActionIntents = new()
         {
             "app.open", "app.close", "app.minimize", "app.maximize", "app.resize", "browser.open", "browser.search", "browser.tab",
             "power.shutdown", "power.restart", "power.sleep", "power.lock", "media", "volume", "screenshot.take",
-            "calendar.add", "calendar.edit", "calendar.delete", "timer", "reminder", "remember", "forget", "check.now",
+            "calendar.add", "calendar.edit", "calendar.delete", "timer", "reminder", "remember", "remember.tell", "forget", "check.now",
         };
 
         private AceAnswer Done(AceAnswer a)
@@ -490,6 +509,8 @@ namespace Nimbus.AceV4
             // Order matters: the first rule whose skill returns an answer wins.
             new("help", R(@"^(help(?! me \w)|what can you do|what are your (skills|commands|abilities)|commands|how do i use you)\b"), HelpAsync),
             new("remember", R(@"^(remember|note that|learn|don'?t forget|keep in mind)\b(?! (when|what|how|where|who|if))"), RememberAsync),
+            // Telling Ace about yourself without saying "remember": "my dog is named biscuit", "my favorite color is blue".
+            new("remember.tell", R(@"^(?!.*\?$)(?:my\s+[\w' -]{1,30}?(?:'s|')?\s+name\s+is\s+\w|my\s+[\w' -]{1,30}?\s+is\s+(?:named|called)\s+\w|i\s+(?:have|got|own)\s+an?\s+[\w -]{1,25}?\s+(?:named|called)\s+\w|my\s+fav(?:ou?rite|e)?\s+[\w -]{1,25}?\s+(?:is|are)\s+\w|my\s+birthday\s+is\s+\w)"), RememberAsync),
             new("forget", R(@"^forget\b(?!.*\bhabits\b)|^delete (that|the last) memory\b"), ForgetAsync),
             new("correct", R(@"^(no|nope|wrong|incorrect|that'?s (wrong|not right|incorrect|not true))[,.!]*\s+(it'?s|it is|the answer is|actually|it was)\s+.+"), CorrectAsync),
             new("power.shutdown", R(@"^(shut ?down|power (off|down)|turn off)( the| my| this)?( pc| computer| laptop| system| machine| windows| everything)?( now| right now)?$"), ShutdownAsync),
@@ -512,7 +533,7 @@ namespace Nimbus.AceV4
             new("calendar.delete", R(@"^(delete|remove|cancel|clear|erase|get rid of)\b.*\b(event|appointment|meeting|calendar|practice|party|class|lesson|game|session)\b|\b(take|remove) .+ off (my|the) calendar\b"), CalendarDeleteAsync),
             new("calendar.edit", R(@"^(move|reschedule|change|rename|push|postpone|shift|bump|edit|update)\b.*\b(to|back|forward|earlier|later|instead|by)\b"), CalendarEditAsync),
             new("calendar.add", R(@"\b(add|put|schedule|create|make|book|set up|plan)\b.*\b(calendar|event|appointment|meeting)\b|^schedule\b|\bon my calendar\b|\bto my calendar\b|^(add|put|book|plan|set up)\b.+\b(today|tonight|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|sunday|next (week|month)|this (weekend|week)|at (\d|noon|midnight)|\d{1,2}(:\d\d)? ?(am|pm)|on (the )?\d{1,2}(st|nd|rd|th)?|on (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*)\b"), CalendarAddAsync),
-            new("sleep.bedtime", R(@"\b(bed ?time|go to (bed|sleep)|sleep schedule|how (much|long) (do|am|did) i (usually )?sleep|when (do|should) i (usually )?(sleep|wake|get up)|how much sleep)\b"), BedtimeAsync),
+            new("sleep.bedtime", R(@"\b(bed ?time|go to (bed|sleep)|sleep schedule|how (much|long) (do|am|did) i (usually )?sleep|when (do|should) i (usually )?(sleep|wake|get up)|how much sleep(?! (?:do|does|should) (?:kids|children|teens?|teenagers|adults|babies|people|grown ?ups|an? (?:kid|teen|teenager|child|baby|person|adult|\d+ year old))\b))\b"), BedtimeAsync),
             new("app.list", R(@"\b(what|which)( apps| programs| windows| stuff)( are| is)? (open|running)\b|^list( my)?( open)? (apps|windows|programs)\b|^what'?s (open|running)( right now)?$"), ListAppsAsync),
             new("app.minimize", R(@"^(minimi[sz]e|hide)\b|^show( me)? (the )?desktop$"), MinimizeAsync),
             new("app.maximize", R(@"^(maximi[sz]e|restore|un-?minimi[sz]e)\b|^make .+ (full ?screen|maximi[sz]ed|big)$"), MaximizeAsync),
@@ -524,11 +545,11 @@ namespace Nimbus.AceV4
             new("file.search", R(@"^(find|locate|look for|search for|search my (files|pc|computer|drive|downloads|desktop|documents) for|where('?s| is| are| did i (put|save))|show me( my)?)\b.+\b(file|files|doc|docs|document|documents|pdf|pdfs|folder|video|videos|photo|photos|picture|pictures|image|images|song|songs|stl|stls|blend|zip|download|downloads|spreadsheet|slides|presentation|model|models|3mf|exe|installer|script)\b|^search my (files|pc|computer|drive) for\b"), FindFilesAsync),
             new("notifications", R(@"\bnotifications?\b|\bdid i miss anything\b|\banything (i need to|i should|to) (see|know|check)\b|\bany (new )?messages\b"), NotificationsAsync),
             new("check.now", R(@"^(check|scan)( my| the)? (pc|computer|everything|stuff|things|system)( now)?$|^(do|run)( a| your)? (check|checks|scan)( now)?$|^check now$|^wake up( and check.*)?$|^look around$"), CheckNowAsync),
-            new("battery", R(@"\bbattery\b"), BatteryAsync),
+            new("battery", R(@"^(?!.*\b(invent|invented|inventor|discover|discovered|history|who made|who created|came up with)\b).*\bbattery\b"), BatteryAsync),
             new("storage", R(@"\b(disk|drive|storage|ssd|hdd|space)\b.*\b(free|left|full|check|much|have|low)\b|\b(how much|check|check on|look at)( my| the)?( free)? (disk |drive )?(space|storage)\b|\b(big|large|huge|biggest|largest)( files| downloads)\b|\bfree up (some )?space\b|\bwhat'?s taking up (my )?space\b|\brecycle bin\b"), StorageAsync),
             new("system.status", R(@"\b(cpu|gpu|ram)\b|\bhow('?s| is)( my)? (pc|computer|laptop|system)( doing| running)?\b|\bsystem status\b|\b(pc|computer|laptop)( is)?( running)? (slow|hot|laggy)\b|\bwhat'?s using (my |the |all )?(ram|memory|cpu)\b|\b(temps?|temperatures?)\b.*\b(pc|cpu|gpu|computer)\b|\bfan speed\b|\binternet speed\b|\bupload|download speed\b"), SystemStatusAsync),
             new("time", R(@"^(what )?time( is it)?( right now| now)?\??$|^what'?s the time|\b(what|which)('?s| is) (the )?(date|day)( today| is it)?\b|\bwhich (date|day) is (it|today)\b|\bwhat date is (it|today)\b|\bwhat day is (it|today)\b|\bwhat year is it\b|\bhow (many|long) (days|weeks|months|hours|sleeps) (until|till|til|to|before)\b|\bwhat time is it in\b|\btime in [a-z ]+$"), TimeAsync),
-            new("weather", R(@"\b(weather|forecast|umbrella|raining|snowing|rain|snow)\b|\b(how|is it) (hot|cold|warm|chilly) (is it )?(outside|out)\b|\btemperature (outside|today|tomorrow|now|right now|in)\b"), WeatherAsync),
+            new("weather", R(@"^(?!.*\b((how|why) (does|do) (it )?(rain|snow)|(rain|snow)(drops?|flakes?)? (form|forms|happen|happens)|what (causes|makes) (it )?(rain|snow)|what is (rain|snow)|water cycle)\b).*(\b(weather|forecast|umbrella|raining|snowing|rain|snow)\b|\b(how|is it) (hot|cold|warm|chilly) (is it )?(outside|out)\b|\btemperature (outside|today|tomorrow|now|right now|in)\b)"), WeatherAsync),
             new("define", R(@"^(define|definition of|meaning of|what'?s the meaning of|what'?s the definition of)\s+\S+|^what does (the word )?['""]?[a-z-]+['""]? mean\??$|^how do you spell\s+\S+"), DefineAsync),
             new("web.search", R(@"^(look up|search (the )?(web|internet) for|find out|google it|search it up|search online for|check online|research)\b"), WebSearchAsync),
         };

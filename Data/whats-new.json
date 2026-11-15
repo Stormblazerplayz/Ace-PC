@@ -1,0 +1,58 @@
+{
+ "4.1.0": [
+  {
+   "title": "Ace is its own app now",
+   "text": "Ace.exe opens straight to Ace, like the iPad app: the orb up top, the chat under it. No dashboard."
+  },
+  {
+   "title": "Click the orb for Settings",
+   "text": "Pick Normal Ace or LFM3 Omni as the brain, plus updates, sounds and voice."
+  },
+  {
+   "title": "Hold the orb to talk",
+   "text": "Or press Ctrl+Alt+Space, or say \"Hey Ace\"."
+  },
+  {
+   "title": "Runs by itself",
+   "text": "No .NET install needed. Just unzip and double-click Ace.exe."
+  },
+  {
+   "title": "493 new facts",
+   "text": "Shapes, art, geography, science, animals, sports, history, inventions and more."
+  },
+  {
+   "title": "Better memory",
+   "text": "Tell me \"my dog is named Biscuit\" or \"my favorite color is green\" and ask me later."
+  },
+  {
+   "title": "Trivia fix",
+   "text": "Answers like \"J.K. Rowling\", \"T. rex\" and \"Mauna Kea\" count now instead of confusing me."
+  },
+  {
+   "title": "What's new and beta updates",
+   "text": "These notes show after an update. Turn on beta updates in Settings to get new stuff first."
+  },
+  {
+   "title": "Understands you better",
+   "text": "Ignores filler like \"kinda\" and \"or something\", and \"what is RAM\" gets an answer instead of a PC check."
+  }
+ ],
+ "4.0.0": [
+  {
+   "title": "Ace V4",
+   "text": "A smarter brain that thinks in steps and shows you how it got each answer."
+  },
+  {
+   "title": "62 built-in scripts",
+   "text": "Roblox Lua and C++ scripts like kill bricks and moving parts, and Ace can explain them line by line."
+  },
+  {
+   "title": "Trivia high scores",
+   "text": "Ace keeps your best scores and streaks."
+  },
+  {
+   "title": "Auto-update",
+   "text": "Ace updates itself from GitHub, keeps a backup and goes back to it if something breaks."
+  }
+ ]
+}

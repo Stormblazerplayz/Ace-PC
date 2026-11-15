@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Nimbus V3 Polish: a working WPF demo of the "V3 Polish" design.
+  <!-- Ace for PC: the Ace assistant app for Windows, like the Ace iPad app.
        Open this folder in Visual Studio 2022, or run "dotnet run" in it, on Windows. -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -9,22 +9,30 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>Nimbus</RootNamespace>
-    <AssemblyName>NimbusV3Polish</AssemblyName>
+    <!-- The program is Ace.exe. -->
+    <AssemblyName>Ace</AssemblyName>
     <!-- LibreHardwareMonitorLib only ships Windows x64/x86/arm64 builds, so pick one. -->
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>false</SelfContained>
     <!-- Ace's version. The GitHub release workflow sets it from the tag (v4.0.1 → 4.0.1), and the
          auto-updater compares it with the newest release. -->
-    <Version>4.0.0</Version>
+    <Version>4.1.0</Version>
+    <ApplicationIcon>Ace.ico</ApplicationIcon>
+    <Product>Ace</Product>
+    <AssemblyTitle>Ace</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- The updater is its own little program (in the Updater folder). It's built along with Nimbus and
-         ends up next to it as NimbusUpdater.exe. -->
+    <!-- The window and taskbar icon (the same orb as the iPad app). -->
+    <None Update="Ace.ico" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The updater is its own little program (in the Updater folder). The release build publishes it
+         next to Ace.exe as NimbusUpdater.exe (see Build-Release.ps1). -->
     <Compile Remove="Updater\**" />
     <None Remove="Updater\**" />
     <Page Remove="Updater\**" />
-    <ProjectReference Include="Updater\NimbusUpdater.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,7 +50,7 @@
 
   <ItemGroup>
     <!-- Ace V4's question-and-answer bank, copied next to the app -->
-    <None Include="Data\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Data\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
   </ItemGroup>
 
 </Project>

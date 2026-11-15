@@ -32,7 +32,9 @@ namespace Nimbus.AceV4
         private static readonly string[] ChatTopics = { "smalltalk", "ace", "nimbus", "personal", "learned", "pc", "howto_life", "games_making" };
 
         private static bool TimeSensitive(string q) =>
-            Regex.IsMatch(q, @"\b(today|tonight|now|right now|current(ly)?|latest|newest|recent(ly)?|this (week|month|year)|news|score|won|winning|price|cost|stock|released?|release date|update|patch|coming out|upcoming|20[2-3]\d|still|yet|anymore|live|trending|who is the (president|ceo|king|queen|prime minister)|how old is)\b", RegexOptions.IgnoreCase);
+            Regex.IsMatch(q, @"\b(today|tonight|now|right now|current(ly)?|latest|newest|recent(ly)?|this (week|month|year)|news|score|won|winning|price|cost|stock|released?|release date|update|patch|coming out|upcoming|20[2-3]\d|still|yet|anymore|live (score|scores|stream|now|results?|updates?)|trending|who is the (president|ceo|king|queen|prime minister)|how old is (?!(the )?(universe|earth|sun|moon|world|milky way|solar system|pyramids?|grand canyon|dinosaurs?|ocean|planet)\b))\b", RegexOptions.IgnoreCase)
+            // History questions ("who won world war 2") aren't news.
+            && !Regex.IsMatch(q, @"\b(war|ww ?[12]|battle|revolution|ancient|in (1\d{3}|[1-9]\d{0,2}) ?(bc|ad)?)\b", RegexOptions.IgnoreCase);
 
         private static bool LooksFactual(string q) =>
             Regex.IsMatch(q, @"^(who|what|when|where|which|why|how|is|are|was|were|does|do|did|can|could|will|should|tell me (about|what|who|why|how)|explain|describe|define|name)\b", RegexOptions.IgnoreCase)
@@ -140,6 +142,14 @@ namespace Nimbus.AceV4
             var personal = PersonalUnknown(q, best);
             if (personal != null) { Step("That's about you, and you haven't told me yet"); return personal; }
 
+            // LFM3 Omni picked as the brain: it answers questions (things you taught me still come from my memory).
+            if (Config.Brain == "model" && !(best != null && best.Entry.Learned != null && best.Score >= HighScore))
+            {
+                var fromModel = await HelperAsync(q, null, turn.Ct).ConfigureAwait(false);
+                if (fromModel != null) return fromModel;
+                Step("LFM3 Omni isn't running, so I answered myself");
+            }
+
             AceAnswer? draft = null;
             if (best != null && best.Score >= MidScore) draft = BankAnswer(best, Math.Min(0.99, best.Score + (best.Score >= HighScore ? 0.15 : 0)));
 
@@ -244,7 +254,9 @@ namespace Nimbus.AceV4
                     draft.Text = (found == null ? "I can't check the web right now, so this might be out of date: " : "I couldn't find anything newer, so this might be out of date: ") + draft.Text;
                     return draft;
                 }
-                draft.Opener = Composer.Hedge(draft.Confidence);
+                // "I'm fairly sure about this one. I can't know that yet" sounds silly, so answers that are
+                // already about not knowing get no hedge.
+                draft.Opener = Regex.IsMatch(draft.Text, @"^(I can'?t|Nobody knows|No one knows|That's a myth)", RegexOptions.IgnoreCase) ? "" : Composer.Hedge(draft.Confidence);
                 draft.Text = draft.Opener + draft.Text;
                 return draft;
             }
@@ -557,13 +569,13 @@ namespace Nimbus.AceV4
                 string context = notes != null && notes.PageText.Length > 0
                     ? "\n\nNotes from the web:\n" + string.Join(" ", Lexical.BestSentences(question, notes.PageText, 5, Embedder))
                     : "";
-                string system = $"You are Ace, a friendly assistant inside the Nimbus app, talking to {Config.UserName}, who is 12. Answer in 1 to 3 short, plain sentences. If you aren't sure, say so. Use the notes if they help.";
+                string system = $"You are Ace, a friendly assistant app on a Windows PC, talking to {Config.UserName}, who is 12. Answer in 1 to 3 short, plain sentences. If you aren't sure, say so. Use the notes if they help.";
                 string text = await AceBrain.Shared.CompleteAsync(new[] { ChatTurn.User(question + context) }, system, null, cts.Token).ConfigureAwait(false);
                 text = ThinkTags.Strip(text);
                 text = Regex.Replace(text, @"^\s*(ace|assistant)\s*:\s*", "", RegexOptions.IgnoreCase).Trim();
                 if (string.IsNullOrWhiteSpace(text)) return null;
                 Step("The helper answered");
-                var a = AceAnswer.Say(text, "helper", 0.55);
+                var a = AceAnswer.Say(text, "helper", Config.Brain == "model" ? 0.75 : 0.55);
                 if (notes?.Sources.Count > 0) a.Cards.Add(WebCard("Sources", notes.Sources.Take(3)));
                 return a;
             }

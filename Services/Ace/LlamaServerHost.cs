@@ -143,7 +143,7 @@ namespace Nimbus.Services.Ace
         public async Task<string?> RestartAsync(CancellationToken ct = default)
         {
             if (!OwnsServer && await _probe.IsReadyAsync(ct).ConfigureAwait(false))
-                return "a llama.cpp server Nimbus didn't start is using the port, so the switch takes effect after you close it";
+                return "a llama.cpp server Ace didn't start is using the port, so the switch takes effect after you close it";
             Stop();
             await Task.Delay(300, ct).ConfigureAwait(false);   // let Windows free the port
             return await EnsureRunningAsync(ct).ConfigureAwait(false);

@@ -1,7 +1,9 @@
-# Builds Nimbus with Ace and publishes a GitHub Release.
+# Builds the Ace app and publishes a GitHub Release.
 # Two ways to start it:
-#   1. Push a tag like v4.0.1 (git tag v4.0.1 && git push origin v4.0.1).
-#   2. On GitHub: Actions > Release > Run workflow, type the version (like 4.0.1) and press Run.
+#   1. Push a tag like v4.1.1 (git tag v4.1.1 && git push origin v4.1.1). A tag like v4.2.0-beta.1 makes a beta
+#      (a pre-release), which only goes to people with "beta updates" on.
+#   2. On GitHub: Actions > Release > Run workflow, type the version (like 4.1.1) and press Run.
+# The zip has Ace.exe (self-contained, no .NET install needed), NimbusUpdater.exe, Data and Setup-AceV4.ps1.
 # Ace's auto-updater downloads NimbusAce-win-x64.zip from the newest release and checks it
 # against NimbusAce-win-x64.zip.sha256 before installing it.
 name: Release
@@ -12,9 +14,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to release, like 4.0.1'
+        description: 'Version to release, like 4.1.1 (or 4.2.0-beta.1 for a beta)'
         required: true
-        default: '4.0.0'
+        default: '4.1.0'
 
 permissions:
   contents: write
@@ -44,32 +46,18 @@ jobs:
           "prerelease=$(if ($v.Contains('-')) { 'true' } else { 'false' })" >> $env:GITHUB_OUTPUT
           Write-Host "Releasing v$v"
 
-      - name: Build
+      - name: Build Ace.exe (self-contained) and zip it
         shell: pwsh
         env:
           VERSION: ${{ steps.ver.outputs.version }}
-        run: |
-          dotnet publish NimbusV3Polish.csproj -c Release -o publish "-p:Version=$env:VERSION"
-          if ($LASTEXITCODE -ne 0) { throw "Build failed" }
-          if (-not (Test-Path publish\NimbusV3Polish.exe)) { throw "NimbusV3Polish.exe is missing" }
-          if (-not (Test-Path publish\NimbusUpdater.exe)) { throw "NimbusUpdater.exe is missing" }
-          Remove-Item publish\*.pdb -ErrorAction SilentlyContinue
-
-      - name: Zip and hash
-        shell: pwsh
-        run: |
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
-          [System.IO.Compression.ZipFile]::CreateFromDirectory("$PWD\publish", "$PWD\NimbusAce-win-x64.zip")
-          $h = (Get-FileHash NimbusAce-win-x64.zip -Algorithm SHA256).Hash.ToLowerInvariant()
-          [System.IO.File]::WriteAllText("$PWD\NimbusAce-win-x64.zip.sha256", "$h  NimbusAce-win-x64.zip`n")
-          Get-Content NimbusAce-win-x64.zip.sha256
+        run: ./Build-Release.ps1 -Version $env:VERSION
 
       - name: Publish the release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.ver.outputs.tag }}
           target_commitish: ${{ github.sha }}
-          name: Nimbus Ace ${{ steps.ver.outputs.tag }}
+          name: Ace ${{ steps.ver.outputs.tag }}
           generate_release_notes: true
           prerelease: ${{ steps.ver.outputs.prerelease }}
           files: |

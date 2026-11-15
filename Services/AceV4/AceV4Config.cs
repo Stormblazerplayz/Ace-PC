@@ -60,8 +60,12 @@ namespace Nimbus.AceV4
         public string HomeCity { get; set; } = "";
         /// <summary>"google", "bing", "duckduckgo" or "brave": where "search for ..." opens in the browser.</summary>
         public string SearchEngine { get; set; } = "google";
-        /// <summary>Let LFM3 Omni / Qwen help with wording when one of them is running.</summary>
+        /// <summary>When Normal Ace doesn't know, ask LFM3 Omni (if it's running).</summary>
         public bool UseLlmHelper { get; set; } = true;
+        /// <summary>Who answers questions: "ace" (Normal Ace: rules, answer bank, web) or "model" (LFM3 Omni). Ace's skills still do the commands.</summary>
+        public string Brain { get; set; } = "ace";
+        /// <summary>Get beta versions from GitHub (pre-releases) before everyone else.</summary>
+        public bool BetaChannel { get; set; }
         /// <summary>When Ace isn't busy, its eyes follow your mouse around the screen.</summary>
         public bool EyesFollowMouse { get; set; } = true;
         /// <summary>Ace learns which apps you open at what times and offers to open them.</summary>
