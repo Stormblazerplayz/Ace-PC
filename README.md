@@ -39,6 +39,8 @@ git tag v4.0.1
 git push origin v4.0.1
 ```
 
+   Or, from any device (even an iPad): on the repo's GitHub page open **Actions > Release > Run workflow**, type the version (like `4.0.1`) and press **Run workflow**.
+
 3. GitHub Actions (`.github/workflows/release.yml`) builds Nimbus, zips it, makes the `.sha256` file and publishes the release. Every Nimbus with auto-update on picks it up within 6 hours. Tags with a dash, like `v4.1.0-beta`, become pre-releases, and Ace skips those.
 
 ## Drop it into your own Nimbus
