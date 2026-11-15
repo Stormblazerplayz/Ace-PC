@@ -1,4 +1,7 @@
-# Builds Nimbus with Ace and publishes a GitHub Release when you push a tag like v4.0.1.
+# Builds Nimbus with Ace and publishes a GitHub Release.
+# Two ways to start it:
+#   1. Push a tag like v4.0.1 (git tag v4.0.1 && git push origin v4.0.1).
+#   2. On GitHub: Actions > Release > Run workflow, type the version (like 4.0.1) and press Run.
 # Ace's auto-updater downloads NimbusAce-win-x64.zip from the newest release and checks it
 # against NimbusAce-win-x64.zip.sha256 before installing it.
 name: Release
@@ -6,6 +9,12 @@ name: Release
 on:
   push:
     tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, like 4.0.1'
+        required: true
+        default: '4.0.0'
 
 permissions:
   contents: write
@@ -13,8 +22,6 @@ permissions:
 jobs:
   release:
     runs-on: windows-latest
-    env:
-      TAG: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v4
 
@@ -22,12 +29,27 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Work out the version
+        id: ver
+        shell: pwsh
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          $raw = if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') { $env:INPUT_VERSION } else { $env:REF_NAME }
+          $v = $raw.Trim().TrimStart('v', 'V')
+          if ($v -notmatch '^\d+\.\d+(\.\d+)?(-[0-9A-Za-z.-]+)?$') { throw "'$raw' isn't a version like 4.0.1" }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          "tag=v$v" >> $env:GITHUB_OUTPUT
+          "prerelease=$(if ($v.Contains('-')) { 'true' } else { 'false' })" >> $env:GITHUB_OUTPUT
+          Write-Host "Releasing v$v"
+
       - name: Build
         shell: pwsh
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
         run: |
-          $v = $env:TAG.TrimStart('v')
-          if ($v -notmatch '^\d+\.\d+(\.\d+)?([-+].*)?$') { throw "The tag $env:TAG isn't a version like v4.0.1" }
-          dotnet publish NimbusV3Polish.csproj -c Release -o publish "-p:Version=$v"
+          dotnet publish NimbusV3Polish.csproj -c Release -o publish "-p:Version=$env:VERSION"
           if ($LASTEXITCODE -ne 0) { throw "Build failed" }
           if (-not (Test-Path publish\NimbusV3Polish.exe)) { throw "NimbusV3Polish.exe is missing" }
           if (-not (Test-Path publish\NimbusUpdater.exe)) { throw "NimbusUpdater.exe is missing" }
@@ -45,9 +67,11 @@ jobs:
       - name: Publish the release
         uses: softprops/action-gh-release@v2
         with:
-          name: Nimbus Ace ${{ github.ref_name }}
+          tag_name: ${{ steps.ver.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Nimbus Ace ${{ steps.ver.outputs.tag }}
           generate_release_notes: true
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          prerelease: ${{ steps.ver.outputs.prerelease }}
           files: |
             NimbusAce-win-x64.zip
             NimbusAce-win-x64.zip.sha256
