@@ -62,6 +62,7 @@ namespace Nimbus.Overlay
         private string _flashStatus = "";
         private DateTime _flashUntil;
         private int _ticks;
+        private Button? _maxButton;
 
         public AceWindow()
         {
@@ -121,6 +122,8 @@ namespace Nimbus.Overlay
 
             var winButtons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Top };
             winButtons.Children.Add(WindowButton("", "Minimize", () => WindowState = WindowState.Minimized, danger: false));
+            _maxButton = WindowButton("\uE922", "Maximize", ToggleMaximize, danger: false);
+            winButtons.Children.Add(_maxButton);
             winButtons.Children.Add(WindowButton("", "Close", Close, danger: true));
             top.Children.Add(winButtons);
             Grid.SetRow(top, 0);
@@ -311,6 +314,12 @@ namespace Nimbus.Overlay
                 _orb.Paused = WindowState == WindowState.Minimized;
                 // A maximized borderless window hangs over the screen edge a little; pad it back in.
                 _root.Margin = WindowState == WindowState.Maximized ? new Thickness(7) : new Thickness(0);
+                if (_maxButton is { Content: TextBlock glyph })
+                {
+                    bool max = WindowState == WindowState.Maximized;
+                    glyph.Text = max ? "\uE923" : "\uE922";
+                    _maxButton.ToolTip = max ? "Restore" : "Maximize";
+                }
             };
             Loaded += (_, _) => { RefreshTimers(); UpdateSend(); _input.Focus(); };
             Closed += (_, _) =>
@@ -417,7 +426,7 @@ namespace Nimbus.Overlay
                 Flash(a.Mood == "alert" ? OrbMood.Alert : OrbMood.Happy, a.Mood == "alert" ? "Heads up" : "All good", 3.5);
             else if (_flash == OrbMood.Checking)
                 _flashUntil = DateTime.Now;
-            if (!IsActive && WindowState != WindowState.Minimized) FlashTaskbar();
+            if (!IsActive) FlashTaskbar();   // Ace said something while you were in another app: its taskbar button lights up (no pop-ups)
         }
 
         // ===================================================================== Messages
@@ -1016,7 +1025,7 @@ namespace Nimbus.Overlay
             });
         }
 
-        /// <summary>Shows the window again (from the pop-up, the taskbar or a second start of Ace).</summary>
+        /// <summary>Shows the window again (from the taskbar, the Start menu or a second start of Ace).</summary>
         public void BringBack()
         {
             if (!IsVisible) Show();

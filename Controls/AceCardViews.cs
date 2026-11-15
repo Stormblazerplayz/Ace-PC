@@ -17,7 +17,7 @@ using Nimbus.Services.Calendar;
 namespace Nimbus.Controls
 {
     /// <summary>
-    /// Turns Ace V4's answers and cards into WPF views. Used by the Ace page (full size) and the eyes overlay (compact).
+    /// Turns Ace V4's answers and cards into WPF views. Used by the Ace window.
     /// Recipes get a tickable ingredient list and numbered steps, searches get rows or thumbnails, confirm cards get
     /// Yes/No buttons and countdowns get a big number with Cancel.
     /// </summary>

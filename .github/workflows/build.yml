@@ -1,0 +1,43 @@
+# Build check: builds Ace on Windows, makes the zip and the installer, and runs Tools/Test-Ace.ps1
+# (opens Ace, checks it's one normal window with no pop-up, asks the brain a question, installs, uninstalls).
+name: Build
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) { choco install innosetup -y --no-progress }
+
+      - name: Build Ace, the zip and the installer
+        shell: pwsh
+        run: ./Build-Release.ps1
+
+      - name: Test Ace on Windows
+        shell: pwsh
+        run: ./Tools/Test-Ace.ps1
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Ace-build
+          path: |
+            Ace-Setup.exe
+            NimbusAce-win-x64.zip
+            NimbusAce-win-x64.zip.sha256
+          if-no-files-found: ignore

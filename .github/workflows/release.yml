@@ -4,6 +4,8 @@
 #      (a pre-release), which only goes to people with "beta updates" on.
 #   2. On GitHub: Actions > Release > Run workflow, type the version (like 4.1.1) and press Run.
 # The zip has Ace.exe (self-contained, no .NET install needed), NimbusUpdater.exe, Data and Setup-AceV4.ps1.
+# Ace-Setup.exe installs Ace with a Start menu shortcut and an uninstaller. Nothing is published unless
+# Tools/Test-Ace.ps1 passes first.
 # Ace's auto-updater downloads NimbusAce-win-x64.zip from the newest release and checks it
 # against NimbusAce-win-x64.zip.sha256 before installing it.
 name: Release
@@ -16,7 +18,7 @@ on:
       version:
         description: 'Version to release, like 4.1.1 (or 4.2.0-beta.1 for a beta)'
         required: true
-        default: '4.1.0'
+        default: '4.2.0'
 
 permissions:
   contents: write
@@ -46,11 +48,20 @@ jobs:
           "prerelease=$(if ($v.Contains('-')) { 'true' } else { 'false' })" >> $env:GITHUB_OUTPUT
           Write-Host "Releasing v$v"
 
-      - name: Build Ace.exe (self-contained) and zip it
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) { choco install innosetup -y --no-progress }
+
+      - name: Build Ace.exe (self-contained), the zip and the installer
         shell: pwsh
         env:
           VERSION: ${{ steps.ver.outputs.version }}
         run: ./Build-Release.ps1 -Version $env:VERSION
+
+      - name: Test Ace on Windows before publishing
+        shell: pwsh
+        run: ./Tools/Test-Ace.ps1
 
       - name: Publish the release
         uses: softprops/action-gh-release@v2
@@ -63,3 +74,4 @@ jobs:
           files: |
             NimbusAce-win-x64.zip
             NimbusAce-win-x64.zip.sha256
+            Ace-Setup.exe
