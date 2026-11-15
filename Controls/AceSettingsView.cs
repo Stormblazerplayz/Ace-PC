@@ -22,6 +22,14 @@ namespace Nimbus.Controls
 
             void Save() => rt.SaveConfig();
 
+            // ---------------- Brain (same choices as the iPad app)
+            stack.Children.Add(Section("Brain"));
+            stack.Children.Add(Labeled("Answer with", Chips(new[] { ("Normal Ace", "ace"), ("LFM3 Omni", "model") }, c.Brain == "model" ? "model" : "ace", v => { c.Brain = v; Save(); })));
+            var brainNote = AceCardViews.Text("Normal Ace runs by itself, no internet or model needed. LFM3 Omni answers with the AI model when it's running on this PC, and Ace answers if it isn't.", 11.5, "MutedBrush");
+            brainNote.Margin = new Thickness(0, 0, 0, 4);
+            stack.Children.Add(brainNote);
+            stack.Children.Add(Toggle("When Normal Ace doesn't know, ask LFM3 Omni (if it's running)", c.UseLlmHelper, v => { c.UseLlmHelper = v; Save(); }));
+
             // ---------------- Sound
             stack.Children.Add(Section("Sound"));
             stack.Children.Add(Toggle("Sound effects", c.Sounds, v => { c.Sounds = v; Save(); if (v) rt.Play(Sfx.Success); }));
@@ -52,7 +60,7 @@ namespace Nimbus.Controls
             {
                 try
                 {
-                    string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Nimbus Ace Sounds");
+                    string folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Ace Sounds");
                     int n = SoundEngine.ExportAll(folder);
                     export.Content = $"Saved {n} sounds ✓";
                     Process.Start(new ProcessStartInfo(folder) { UseShellExecute = true })?.Dispose();
@@ -75,7 +83,7 @@ namespace Nimbus.Controls
                     Save();
                 })));
             stack.Children.Add(Toggle("Stay quiet during full-screen games and videos", c.QuietDuringFullScreen, v => { c.QuietDuringFullScreen = v; Save(); }));
-            stack.Children.Add(Toggle("Start Nimbus with Windows (greets you each day)", c.StartWithWindows, v => { c.StartWithWindows = v; Save(); }));
+            stack.Children.Add(Toggle("Start Ace with Windows (greets you each day)", c.StartWithWindows, v => { c.StartWithWindows = v; Save(); }));
 
             // ---------------- Screen time
             stack.Children.Add(Section("Screen time"));
@@ -107,7 +115,6 @@ namespace Nimbus.Controls
             stack.Children.Add(Labeled("Sleep goal", Chips(new[] { ("8 h", "8"), ("8.5 h", "8.5"), ("9 h", "9"), ("9.5 h", "9.5"), ("10 h", "10") },
                 c.SleepGoalHours.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 v => { c.SleepGoalHours = double.Parse(v, System.Globalization.CultureInfo.InvariantCulture); Save(); })));
-            stack.Children.Add(Toggle("Ask LFM3 Omni for help on hard questions (if it's running)", c.UseLlmHelper, v => { c.UseLlmHelper = v; Save(); }));
 
             // ---------------- Extras
             stack.Children.Add(Section("Extras"));
@@ -121,6 +128,7 @@ namespace Nimbus.Controls
             // ---------------- Updates
             stack.Children.Add(Section("Updates"));
             stack.Children.Add(Toggle("Update Ace by itself from GitHub", c.AutoUpdate, v => { c.AutoUpdate = v; Save(); }));
+            stack.Children.Add(Toggle("Get beta updates (new stuff first, might be a bit buggy)", c.BetaChannel, v => { c.BetaChannel = v; Save(); }));
             var upText = AceCardViews.Text("", 11.5, "MutedBrush");
             upText.Margin = new Thickness(0, 2, 0, 6);
             var checkNow = Button("Check now");
@@ -135,7 +143,7 @@ namespace Nimbus.Controls
                 if (Nimbus.AceV4.Pc.AutoUpdater.RunningFromSource)
                     lines.Add("You're running from the source code (dotnet run), so it only tells you about new versions. The copy from the release zip installs them by itself.");
                 else
-                    lines.Add("It checks when Nimbus starts and every 6 hours, and installs while you're away. It keeps a backup and goes back to it if the new version won't start.");
+                    lines.Add("It checks when Ace starts and every 6 hours, and installs while you're away. It keeps a backup and goes back to it if the new version won't start.");
                 upText.Text = string.Join("\n", lines);
                 checkNow.IsEnabled = !Nimbus.AceV4.Pc.AutoUpdater.Busy;
             }
@@ -177,14 +185,14 @@ namespace Nimbus.Controls
 
         // ===================================================================== Bits
 
-        private static TextBlock Section(string title)
+        internal static TextBlock Section(string title)
         {
             var t = AceCardViews.Text(title.ToUpperInvariant(), 10.5, "AceBrush", bold: true, wrap: false);
             t.Margin = new Thickness(0, 14, 0, 6);
             return t;
         }
 
-        private static CheckBox Toggle(string label, bool value, Action<bool> changed)
+        internal static CheckBox Toggle(string label, bool value, Action<bool> changed)
         {
             var cb = new CheckBox { Content = label, IsChecked = value, Margin = new Thickness(0, 3, 0, 3) };
             cb.SetResourceReference(FrameworkElement.StyleProperty, "ToggleSwitch");
@@ -193,14 +201,14 @@ namespace Nimbus.Controls
             return cb;
         }
 
-        private static Button Button(string label)
+        internal static Button Button(string label)
         {
             var b = new Button { Content = label, Margin = new Thickness(0, 0, 6, 6) };
             b.SetResourceReference(FrameworkElement.StyleProperty, "SmallPillButton");
             return b;
         }
 
-        private static FrameworkElement Labeled(string label, FrameworkElement control)
+        internal static FrameworkElement Labeled(string label, FrameworkElement control)
         {
             var dock = new DockPanel { Margin = new Thickness(0, 3, 0, 3) };
             var t = AceCardViews.Text(label, 12, "MutedBrush", wrap: false);
@@ -212,7 +220,7 @@ namespace Nimbus.Controls
             return dock;
         }
 
-        private static WrapPanel Chips((string Label, string Value)[] options, string current, Action<string> picked)
+        internal static WrapPanel Chips((string Label, string Value)[] options, string current, Action<string> picked)
         {
             string group = "aceset" + (++_group);
             var wrap = new WrapPanel();

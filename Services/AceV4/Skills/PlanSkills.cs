@@ -306,26 +306,8 @@ namespace Nimbus.AceV4
             // A question ("what's my dog's name?") is asking for a memory, not giving one.
             if (fact.EndsWith("?") || Regex.IsMatch(fact, @"^(what|what's|whats|who|who's|when|where|where's|why|how|which|is|are|do|does|did|can|could|tell me|remind me)\b", RegexOptions.IgnoreCase))
                 return Task.FromResult<AceAnswer?>(null);
-            var questions = new List<string> { fact, "what did i tell you about " + string.Join(" ", Lexical.Tokens(fact).Take(4)) };
-            string answer;
-            string you(string s) => Regex.Replace(Regex.Replace(Regex.Replace(s, @"\bmy\b", "your", RegexOptions.IgnoreCase), @"\bI am\b|\bI'm\b", "you're", RegexOptions.IgnoreCase), @"\bI\b", "you");
-
-            var mine = Regex.Match(fact, @"^my\s+(.+?)\s+(is|are|was|were)\s+(.+)$", RegexOptions.IgnoreCase);
-            var named = Regex.Match(fact, @"^(.+?)'s\s+(.+?)\s+(is|are)\s+(.+)$", RegexOptions.IgnoreCase);
+            var (questions, answer) = MemoryFact(fact);
             var have = Regex.Match(fact, @"^i\s+(have|got)\s+(?:a|an)\s+(.+?)\s+(on|at|in|this|next|tomorrow|today)\b(.*)$", RegexOptions.IgnoreCase);
-            if (mine.Success)
-            {
-                string thing = mine.Groups[1].Value, verb = mine.Groups[2].Value, value = mine.Groups[3].Value;
-                questions.AddRange(new[] { $"what is my {thing}", $"what's my {thing}", $"my {thing}", $"do you know my {thing}", $"when is my {thing}", $"who is my {thing}", $"where is my {thing}" });
-                answer = $"Your {thing} {verb} {value}.";
-            }
-            else if (named.Success)
-            {
-                string who = named.Groups[1].Value, thing = named.Groups[2].Value, value = named.Groups[4].Value;
-                questions.AddRange(new[] { $"what is {who}'s {thing}", $"{who}'s {thing}", $"what's {who}'s {thing}" });
-                answer = $"{Composer.Capital(who)}'s {thing} {named.Groups[3].Value} {value}.";
-            }
-            else answer = "You told me: " + you(fact) + ".";
             if (have.Success) questions.Add("when is my " + have.Groups[2].Value);
 
             var entry = Bank.Learn(questions, answer, "you told me", "personal");
@@ -339,6 +321,73 @@ namespace Nimbus.AceV4
             }
             a.Mood = "love";
             return Task.FromResult<AceAnswer?>(a);
+        }
+
+        /// <summary>
+        /// Turns something you told Ace into the ways you might ask for it later and the answer to give.
+        /// "my dog is named biscuit" → "what's my dog's name" → "Your dog's name is Biscuit."
+        /// </summary>
+        public static (List<string> Questions, string Answer) MemoryFact(string fact)
+        {
+            fact = Regex.Replace(fact.Trim().TrimEnd('.', '!'), @"\s+", " ");
+            var questions = new List<string> { fact, "what did i tell you about " + string.Join(" ", Lexical.Tokens(fact).Take(4)) };
+            const RegexOptions I = RegexOptions.IgnoreCase;
+            static string you(string s) => Regex.Replace(Regex.Replace(Regex.Replace(Regex.Replace(s, @"\bmy\b", "your", RegexOptions.IgnoreCase), @"\bI am\b|\bI'm\b", "you're", RegexOptions.IgnoreCase), @"\bme\b", "you", RegexOptions.IgnoreCase), @"\bI\b", "you");
+            // Names look right with a capital letter ("biscuit" → "Biscuit"), unless you typed your own capitals.
+            static string NameCase(string n) => n == n.ToLowerInvariant() ? Regex.Replace(n, @"\b[a-z]", m => m.Value.ToUpperInvariant()) : n;
+
+            // 1. A name: "my dog is named biscuit", "my dog's name is biscuit", "the name of my cat is tom", "i have a hamster called nugget".
+            var named = Regex.Match(fact, @"^(?:my\s+(?<thing>.+?)(?:'s|')?\s+name\s+is|the\s+name\s+of\s+my\s+(?<thing>.+?)\s+is|my\s+(?<thing>.+?)\s+(?:is|was)\s+(?:named|called)|i\s+(?:have|got|own)\s+(?:a|an)\s+(?<thing>.+?)\s+(?:named|called))\s+(?<name>.+)$", I);
+            if (named.Success && !Regex.IsMatch(named.Groups["thing"].Value, @"^(first|last|middle|full|user|nick)?$", I))
+            {
+                string thing = named.Groups["thing"].Value.Trim().ToLowerInvariant(), name = NameCase(named.Groups["name"].Value.Trim());
+                // "my dogs name is max" (no apostrophe) means the dog, not "dogs". "boss" keeps its s.
+                if (Regex.IsMatch(fact, @"^my\s+" + Regex.Escape(thing) + @"\s+name\b", I) && Regex.IsMatch(thing, @"[^s]s$")) thing = thing[..^1];
+                questions.AddRange(new[]
+                {
+                    $"what is my {thing}'s name", $"what's my {thing}'s name", $"what is my {thing} called", $"what is my {thing} named",
+                    $"what's my {thing} called", $"what did i name my {thing}", $"what do i call my {thing}", $"my {thing}'s name",
+                    $"do you know my {thing}'s name", $"do you remember my {thing}'s name", $"what is the name of my {thing}",
+                    $"tell me my {thing}'s name", $"who is {name}", $"do you know who {name} is",
+                });
+                return (questions, $"Your {thing}'s name is {name}.");
+            }
+
+            // 2. "my favorite color is blue", "my birthday is march 3", "my teacher is mrs lee".
+            var mine = Regex.Match(fact, @"^my\s+(.+?)\s+(is|are|was|were)\s+(.+)$", I);
+            if (mine.Success)
+            {
+                string thing = mine.Groups[1].Value.Trim().ToLowerInvariant(), verb = mine.Groups[2].Value.ToLowerInvariant(), value = you(mine.Groups[3].Value.Trim());
+                questions.AddRange(new[]
+                {
+                    $"what is my {thing}", $"what's my {thing}", $"my {thing}", $"do you know my {thing}", $"do you remember my {thing}",
+                    $"when is my {thing}", $"who is my {thing}", $"where is my {thing}", $"what are my {thing}", $"tell me my {thing}",
+                    $"what did i say my {thing} {verb}",
+                });
+                var fav = Regex.Match(thing, @"^fav(?:ou?rite)?\s+(.+)$");
+                if (fav.Success) questions.AddRange(new[] { $"what {fav.Groups[1].Value} do i like", $"what {fav.Groups[1].Value} do i like best", $"what is my favourite {fav.Groups[1].Value}", $"what is my favorite {fav.Groups[1].Value}", $"what's my fave {fav.Groups[1].Value}" });
+                return (questions, $"Your {thing} {verb} {value}.");
+            }
+
+            // 3. Someone else's thing: "sam's birthday is june 4".
+            var theirs = Regex.Match(fact, @"^(.+?)'s\s+(.+?)\s+(is|are)\s+(.+)$", I);
+            if (theirs.Success)
+            {
+                string who = theirs.Groups[1].Value.Trim(), thing = theirs.Groups[2].Value.Trim().ToLowerInvariant();
+                questions.AddRange(new[] { $"what is {who}'s {thing}", $"{who}'s {thing}", $"what's {who}'s {thing}", $"when is {who}'s {thing}", $"who is {who}'s {thing}" });
+                return (questions, $"{Composer.Capital(who)}'s {thing} {theirs.Groups[3].Value.ToLowerInvariant()} {you(theirs.Groups[4].Value.Trim())}.");
+            }
+
+            // 4. "i like pizza", "i love dragons", "i play the piano".
+            var like = Regex.Match(fact, @"^i\s+(really\s+)?(like|love|hate|play|collect|speak)\s+(.+)$", I);
+            if (like.Success)
+            {
+                string verb = like.Groups[2].Value.ToLowerInvariant(), value = you(like.Groups[3].Value.Trim());
+                questions.AddRange(new[] { $"what do i {verb}", $"do you know what i {verb}", $"what did i say i {verb}", $"tell me what i {verb}" });
+                return (questions, $"You {(like.Groups[1].Success ? "really " : "")}{verb} {value}.");
+            }
+
+            return (questions, "You told me: " + you(fact) + ".");
         }
 
         private Task<AceAnswer?> ForgetAsync(Turn t)

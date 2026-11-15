@@ -67,22 +67,39 @@ namespace Nimbus.AceV4.Pc
         }
 
         public static string CurrentText => Text(Current);
-        public static string Text(Version v) => $"{v.Major}.{v.Minor}.{Math.Max(0, v.Build)}";
 
-        /// <summary>"v4.0.1" → 4.0.1, "4.1" → 4.1.0, "v4.0.1-beta+abc" → 4.0.1. Null if it isn't a version.</summary>
+        /// <summary>
+        /// Versions keep a 4th number so betas sort right: a beta is 4.1.0.N (N = its beta number) and the real
+        /// 4.1.0 is 4.1.0.<see cref="FinalRevision"/>, so 4.1.0-beta.1 &lt; 4.1.0-beta.2 &lt; 4.1.0 &lt; 4.1.1-beta.1.
+        /// </summary>
+        public const int FinalRevision = int.MaxValue;
+        public static bool IsBeta(Version v) => v.Revision >= 0 && v.Revision < FinalRevision;
+        public static string Text(Version v) =>
+            $"{v.Major}.{v.Minor}.{Math.Max(0, v.Build)}" + (IsBeta(v) ? "-beta" + (v.Revision > 0 ? "." + v.Revision : "") : "");
+
+        /// <summary>
+        /// "v4.0.1" → 4.0.1, "4.1" → 4.1.0, "v4.2.0-beta.3" → the 3rd beta of 4.2.0, "4.0.0+8f1c2a" → 4.0.0.
+        /// Null if it isn't a version.
+        /// </summary>
         public static Version? ParseVersion(string tag)
         {
-            var m = Regex.Match(tag.Trim(), @"^[vV]?(\d+)\.(\d+)(?:\.(\d+))?(?:\.(\d+))?");
+            var m = Regex.Match(tag.Trim(), @"^[vV]?(\d+)\.(\d+)(?:\.(\d+))?(?:\.\d+)?(?:-([0-9A-Za-z.-]+))?(?:\+.*)?$");
             if (!m.Success) return null;
             try
             {
+                int rev = FinalRevision;
+                if (m.Groups[4].Success)
+                {
+                    var n = Regex.Match(m.Groups[4].Value, @"(\d+)(?!.*\d)");
+                    rev = n.Success && int.TryParse(n.Groups[1].Value, out int b) ? Math.Min(b, FinalRevision - 1) : 0;
+                }
                 return new Version(int.Parse(m.Groups[1].Value), int.Parse(m.Groups[2].Value),
-                                   m.Groups[3].Success ? int.Parse(m.Groups[3].Value) : 0);
+                                   m.Groups[3].Success ? int.Parse(m.Groups[3].Value) : 0, rev);
             }
             catch { return null; }
         }
 
-        private static Version Norm(Version v) => new(v.Major, v.Minor, Math.Max(0, v.Build));
+        private static Version Norm(Version v) => new(v.Major, v.Minor, Math.Max(0, v.Build), FinalRevision);
 
         // ===================================================================== Saved state
 
@@ -92,6 +109,7 @@ namespace Nimbus.AceV4.Pc
             public string LastRunVersion { get; set; } = "";
             public string UpdatedFrom { get; set; } = "";
             public DateTime UpdatedAt { get; set; }
+            public string WhatsNewShownFor { get; set; } = "";
         }
 
         private static SavedState? _state;
@@ -113,6 +131,15 @@ namespace Nimbus.AceV4.Pc
         public static DateTime LastCheck => State.LastCheck;
         /// <summary>The version this one replaced, if Ace updated in the last day ("4.0.0"), or "".</summary>
         public static string JustUpdatedFrom => State.UpdatedFrom.Length > 0 && DateTime.Now - State.UpdatedAt < TimeSpan.FromDays(1) ? State.UpdatedFrom : "";
+
+        /// <summary>
+        /// The version Ace updated from, while its "What's new" hasn't popped up yet (for a week after an update), or "".
+        /// </summary>
+        public static string PendingWhatsNewFrom =>
+            State.UpdatedFrom.Length > 0 && State.WhatsNewShownFor != CurrentText && DateTime.Now - State.UpdatedAt < TimeSpan.FromDays(7) ? State.UpdatedFrom : "";
+
+        /// <summary>"What's new" popped up for this version, so it won't again.</summary>
+        public static void MarkWhatsNewShown() { State.WhatsNewShownFor = CurrentText; SaveState(); }
 
         public static bool CheckDue => DateTime.Now - State.LastCheck >= Every;
 
@@ -167,12 +194,16 @@ namespace Nimbus.AceV4.Pc
 
         // ===================================================================== GitHub
 
-        /// <summary>The newest release with Ace's zip in it, or null (with why in Status).</summary>
-        public static async Task<ReleaseInfo?> LatestAsync(CancellationToken ct)
+        /// <summary>
+        /// The newest release with Ace's zip in it, or null (with why in Status). With beta on, pre-releases
+        /// count too (GitHub's "latest" skips them, so it reads the list of releases instead).
+        /// </summary>
+        public static async Task<ReleaseInfo?> LatestAsync(CancellationToken ct, bool beta = false)
         {
             if (Web.WebClient.Disabled) { SetStatus("Updates are off while the internet is off."); return null; }
             HttpResponseMessage res;
-            try { res = await Http.GetAsync($"https://api.github.com/repos/{Repo}/releases/latest", ct).ConfigureAwait(false); }
+            string url = beta ? $"https://api.github.com/repos/{Repo}/releases?per_page=30" : $"https://api.github.com/repos/{Repo}/releases/latest";
+            try { res = await Http.GetAsync(url, ct).ConfigureAwait(false); }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException && !ct.IsCancellationRequested)
             {
                 SetStatus("Couldn't reach GitHub. I'll try again later.");
@@ -184,24 +215,54 @@ namespace Nimbus.AceV4.Pc
                 if ((int)res.StatusCode == 403 || (int)res.StatusCode == 429) { SetStatus("GitHub says to slow down. I'll try again later."); return null; }
                 if (!res.IsSuccessStatusCode) { SetStatus($"GitHub answered with an error ({(int)res.StatusCode}). I'll try again later."); return null; }
                 string json = await res.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                var rel = ParseRelease(json);
-                if (rel == null) SetStatus($"The newest release doesn't have {AssetName} and {ShaName} in it yet.");
+                var rel = beta ? NewestRelease(json, includeBetas: true) : ParseRelease(json);
+                if (rel == null) SetStatus(beta ? $"There's no release with {AssetName} and {ShaName} in it yet." : $"The newest release doesn't have {AssetName} and {ShaName} in it yet.");
                 return rel;
             }
         }
 
-        /// <summary>Reads GitHub's release JSON. Null if it has no version tag, no zip or no SHA256 file.</summary>
-        public static ReleaseInfo? ParseRelease(string json)
+        /// <summary>
+        /// Reads GitHub's release JSON. Null if it has no version tag, no zip or no SHA256 file, or if it's a
+        /// pre-release (unless includeBetas).
+        /// </summary>
+        public static ReleaseInfo? ParseRelease(string json, bool includeBetas = false)
         {
             try
             {
                 using var doc = JsonDocument.Parse(json);
-                var root = doc.RootElement;
+                return ReadRelease(doc.RootElement, includeBetas);
+            }
+            catch { return null; }
+        }
+
+        /// <summary>The newest usable release in GitHub's list of releases (betas too if includeBetas), or null.</summary>
+        public static ReleaseInfo? NewestRelease(string listJson, bool includeBetas)
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(listJson);
+                if (doc.RootElement.ValueKind != JsonValueKind.Array) return null;
+                ReleaseInfo? best = null;
+                foreach (var el in doc.RootElement.EnumerateArray())
+                    if (ReadRelease(el, includeBetas) is { } r && (best == null || r.Version > best.Version)) best = r;
+                return best;
+            }
+            catch { return null; }
+        }
+
+        private static ReleaseInfo? ReadRelease(JsonElement root, bool includeBetas)
+        {
+            try
+            {
+                if (root.ValueKind != JsonValueKind.Object) return null;
                 if (root.TryGetProperty("draft", out var d) && d.ValueKind == JsonValueKind.True) return null;
-                if (root.TryGetProperty("prerelease", out var p) && p.ValueKind == JsonValueKind.True) return null;
+                bool pre = root.TryGetProperty("prerelease", out var p) && p.ValueKind == JsonValueKind.True;
+                if (pre && !includeBetas) return null;
                 string tag = root.TryGetProperty("tag_name", out var t) ? t.GetString() ?? "" : "";
                 var version = ParseVersion(tag);
                 if (version == null) return null;
+                // A beta tag on a release that isn't marked as a pre-release still only goes to beta testers.
+                if (IsBeta(version) && !includeBetas) return null;
                 string zip = "", sha = "";
                 if (root.TryGetProperty("assets", out var assets) && assets.ValueKind == JsonValueKind.Array)
                     foreach (var a in assets.EnumerateArray())
@@ -229,7 +290,7 @@ namespace Nimbus.AceV4.Pc
 
         /// <summary>
         /// Checks the zip against the SHA256 text ("hash" or "hash  file.zip"), unzips it into stageDir and returns
-        /// the folder that holds the app (the one with NimbusV3Polish.dll). Null with the reason in error if not.
+        /// the folder that holds the app (the one with Ace.exe). Null with the reason in error if not.
         /// </summary>
         public static string? VerifyAndExtract(string zipPath, string shaText, string stageDir, out string error)
         {
@@ -248,28 +309,39 @@ namespace Nimbus.AceV4.Pc
             }
             catch (Exception ex) { error = "Couldn't unzip the update: " + ex.Message; return null; }
             string? app = FindApp(stageDir);
-            if (app == null) error = "The update zip doesn't have Nimbus in it.";
+            if (app == null) error = "The update zip doesn't have Ace in it.";
             return app;
         }
 
+        /// <summary>Names the app's program has had, newest first. Older releases were called NimbusV3Polish.</summary>
+        public static readonly string[] AppNames = { "Ace", "NimbusV3Polish" };
+
         private static string? FindApp(string dir)
         {
-            string AppDll(string d) => Path.Combine(d, MainName() + ".dll");
-            if (File.Exists(AppDll(dir))) return dir;
+            bool Has(string d) => AppExeIn(d) != null;
+            if (Has(dir)) return dir;
             foreach (var sub in Directory.GetDirectories(dir))
             {
-                if (File.Exists(AppDll(sub))) return sub;
-                foreach (var sub2 in Directory.GetDirectories(sub)) if (File.Exists(AppDll(sub2))) return sub2;
+                if (Has(sub)) return sub;
+                foreach (var sub2 in Directory.GetDirectories(sub)) if (Has(sub2)) return sub2;
             }
             return null;
         }
 
-        /// <summary>The app's own name ("NimbusV3Polish"), so the files to swap and start are known.</summary>
+        /// <summary>The program in a folder ("Ace.exe"), found by its .exe (or the .dll of a non-single-file build). Null if none.</summary>
+        public static string? AppExeIn(string dir)
+        {
+            foreach (var name in AppNames)
+                if (File.Exists(Path.Combine(dir, name + ".exe")) || File.Exists(Path.Combine(dir, name + ".dll"))) return name + ".exe";
+            return null;
+        }
+
+        /// <summary>The running app's own name ("Ace"), so the files to swap and start are known.</summary>
         public static string MainName()
         {
             var asm = Assembly.GetEntryAssembly();
             string name = asm?.GetName().Name ?? "";
-            return name.Length == 0 || name.StartsWith("AceTest", StringComparison.OrdinalIgnoreCase) ? "NimbusV3Polish" : name;
+            return name.Length == 0 || name.StartsWith("AceTest", StringComparison.OrdinalIgnoreCase) ? "Ace" : name;
         }
 
         private static async Task DownloadAsync(string url, string path, CancellationToken ct, Action<double>? progress = null)
@@ -304,13 +376,13 @@ namespace Nimbus.AceV4.Pc
         /// time) runs beforeRestart (the eyes say "Updating Ace…"), starts NimbusUpdater and returns Restarting:
         /// the caller then closes Nimbus. Anything that goes wrong leaves this version exactly as it is.
         /// </summary>
-        public static async Task<(Outcome Outcome, string Message)> CheckAndInstallAsync(Func<bool> canRestart, Func<string, Task> beforeRestart, CancellationToken ct)
+        public static async Task<(Outcome Outcome, string Message)> CheckAndInstallAsync(Func<bool> canRestart, Func<string, Task> beforeRestart, CancellationToken ct, bool beta = false)
         {
             if (Interlocked.Exchange(ref _busy, 1) == 1) return (Outcome.Busy, "I'm already checking for updates.");
             try
             {
                 SetStatus("Checking GitHub for a new version…");
-                var rel = await LatestAsync(ct).ConfigureAwait(false);
+                var rel = await LatestAsync(ct, beta).ConfigureAwait(false);
                 if (rel == null) return (Outcome.Failed, Status);
                 State.LastCheck = DateTime.Now;
                 SaveState();
@@ -355,7 +427,7 @@ namespace Nimbus.AceV4.Pc
                     string? why = LaunchUpdater(app, rel.Version);
                     if (why != null) { SetStatus(why); return (Outcome.Failed, why); }
                     ReadyToInstall = false;
-                    SetStatus($"Updating to {Text(rel.Version)}. Nimbus will be right back!");
+                    SetStatus($"Updating to {Text(rel.Version)}. Ace will be right back!");
                     return (Outcome.Restarting, Status);
                 }
                 catch (OperationCanceledException) when (ct.IsCancellationRequested) { SetStatus("Update stopped."); return (Outcome.Failed, Status); }
@@ -396,7 +468,9 @@ namespace Nimbus.AceV4.Pc
                 catch { }
                 if (!File.Exists(runner)) return "The update is missing NimbusUpdater, so I didn't install it.";
             }
-            string exe = MainName() + ".exe";
+            // Start whatever program the new version has (Ace.exe), and if it fails, the one running now.
+            string oldExe = MainName() + ".exe";
+            string exe = AppExeIn(newApp) ?? oldExe;
             string args = string.Join(" ", new[]
             {
                 "--pid", Environment.ProcessId.ToString(),
@@ -404,6 +478,7 @@ namespace Nimbus.AceV4.Pc
                 "--target", Quote(install),
                 "--backup", Quote(Path.Combine(Folder, "backup")),
                 "--exe", Quote(exe),
+                "--old-exe", Quote(oldExe),
                 "--ok", Quote(OkFile(version)),
                 "--log", Quote(LogPath),
             });

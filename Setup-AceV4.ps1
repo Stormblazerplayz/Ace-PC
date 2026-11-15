@@ -70,5 +70,5 @@ try {
 catch { Write-Host "  Couldn't check speech recognition (that's okay)." -ForegroundColor Yellow }
 
 Write-Host ""
-Write-Host "All set! Start Nimbus again and Ace V4 will use the meaning net." -ForegroundColor Cyan
+Write-Host "All set! Start Ace again and it will use the meaning net." -ForegroundColor Cyan
 Read-Host "Press Enter to close"

@@ -112,7 +112,7 @@ namespace Nimbus.AceV4.Pc
                 "msedge" => "Edge", "chrome" => "Chrome", "firefox" => "Firefox", "explorer" => "File Explorer", "code" => "VS Code",
                 "devenv" => "Visual Studio", "winword" => "Word", "excel" => "Excel", "powerpnt" => "PowerPoint", "robloxstudiobeta" => "Roblox Studio",
                 "robloxplayerbeta" => "Roblox", "spotify" => "Spotify", "discord" => "Discord", "steam" => "Steam", "steamwebhelper" => "Steam",
-                "blender" => "Blender", "obs64" => "OBS", "windowsterminal" => "Terminal", "notepad" => "Notepad", "nimbusv3polish" => "Nimbus",
+                "blender" => "Blender", "obs64" => "OBS", "windowsterminal" => "Terminal", "notepad" => "Notepad", "nimbusv3polish" => "Ace", "ace" => "Ace",
                 "applicationframehost" => "a Windows app", "javaw" => "Minecraft (Java)", "minecraft.windows" => "Minecraft",
                 _ => p.Length > 0 ? char.ToUpperInvariant(p[0]) + p[1..] : p,
             };

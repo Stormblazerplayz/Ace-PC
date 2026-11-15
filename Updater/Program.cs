@@ -8,14 +8,14 @@ namespace Nimbus.Updater
     {
         /// <summary>
         /// NimbusUpdater --pid 1234 --source "new files" --target "install folder" --backup "backup folder"
-        ///               --exe NimbusV3Polish.exe --ok "started.ok" --log "updater.log"
+        ///               --exe Ace.exe [--old-exe NimbusV3Polish.exe] --ok "started.ok" --log "updater.log"
         /// </summary>
         public static int Main(string[] args)
         {
             var job = UpdateJob.Parse(args);
             if (job == null)
             {
-                Console.Error.WriteLine("NimbusUpdater is started by Nimbus when it updates itself. You don't need to run it.");
+                Console.Error.WriteLine("NimbusUpdater is started by Ace when it updates itself. You don't need to run it.");
                 return 1;
             }
             var result = UpdaterCore.Run(job, Start, IsRunning, Console.WriteLine);

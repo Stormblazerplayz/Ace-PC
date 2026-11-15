@@ -41,6 +41,22 @@ namespace Nimbus.AceV4.Brain
     public sealed class KnowledgeBank
     {
         public static string BankPath => Path.Combine(AppContext.BaseDirectory, "Data", "qa-bank.json");
+
+        /// <summary>The main bank plus every extra pack next to it (Data/qa-*.json, like qa-general.json).</summary>
+        public static List<string> BankPaths()
+        {
+            var list = new List<string> { BankPath };
+            try
+            {
+                string dir = Path.GetDirectoryName(BankPath)!;
+                if (Directory.Exists(dir))
+                    list.AddRange(Directory.GetFiles(dir, "qa-*.json")
+                                           .Where(f => !Path.GetFileName(f).Equals("qa-bank.json", StringComparison.OrdinalIgnoreCase))
+                                           .OrderBy(f => f, StringComparer.OrdinalIgnoreCase));
+            }
+            catch { }
+            return list;
+        }
         public static string LearnedPath => Path.Combine(AceV4Config.Folder, "learned.json");
         private static string CachePath => Path.Combine(AceV4Config.Folder, "bank-vectors.bin");
 
@@ -66,7 +82,11 @@ namespace Nimbus.AceV4.Brain
         /// <summary>Loads the bank and the learned answers, and works out the meaning vectors (cached on disk).</summary>
         public void Load()
         {
-            var bank = ReadFile(BankPath);
+            var bank = new List<QaEntry>();
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var path in BankPaths())
+                foreach (var e in ReadFile(path))
+                    if (e.Id.Length == 0 || seen.Add(e.Id)) bank.Add(e);   // the first entry with an id wins
             var learned = ReadFile(LearnedPath);
             lock (_gate)
             {
@@ -151,6 +171,35 @@ namespace Nimbus.AceV4.Brain
         /// and is words only otherwise. Scores near 1 are near-certain; under ~0.55 is a guess.
         /// </summary>
         public List<BankHit> Search(string question, int take = 5, string? topic = null)
+        {
+            var hits = SearchCore(question, take, topic);
+            // "why is the sky blue and not like green or something" → also try "why is the sky blue".
+            string trimmed = WithoutFiller(question);
+            if (trimmed.Length == 0 || trimmed == Plain(question)) return hits;
+            var merged = new Dictionary<QaEntry, BankHit>(ReferenceEqualityComparer.Instance);
+            foreach (var h in hits) merged.TryAdd(h.Entry, h);
+            foreach (var h in SearchCore(trimmed, take, topic))
+                if (!merged.TryGetValue(h.Entry, out var old) || old.Score < h.Score) merged[h.Entry] = h;
+            return merged.Values.OrderByDescending(h => h.Score).ThenByDescending(h => h.Entry.Uses).Take(take).ToList();
+        }
+
+        private static readonly System.Text.RegularExpressions.Regex[] Filler =
+        {
+            new(@"\b(and|but) not (like |as |really )?(a |an |the )?\w+( or (something|anything|whatever))?( like that)?$"),
+            new(@"\b(or (something|anything|whatever)( like that)?|and stuff|and things)\b"),
+            new(@"\b(actually|kinda|kind of|sorta|sort of|really|literally|basically|honestly|seriously|right now|lol|lmao|bro|dude|bruh)\b"),
+        };
+
+        /// <summary>The question with chatty filler taken out: "you're actually kinda cool" → "you are cool".</summary>
+        public static string WithoutFiller(string text)
+        {
+            string s = Plain(text);
+            foreach (var f in Filler) s = f.Replace(s, " ");
+            s = System.Text.RegularExpressions.Regex.Replace(s, @"\s+", " ").Trim();
+            return s.Split(' ').Length >= 2 ? s : "";
+        }
+
+        private List<BankHit> SearchCore(string question, int take, string? topic)
         {
             var words = Lexical.Tokens(question);
             string plain = Plain(question);

@@ -41,6 +41,9 @@ namespace Nimbus.AceV4.Brain
         private static readonly (Regex From, string To)[] PhraseTable =
         {
             (new Regex(@"\b(the )?(united states( of america)?|u\.s\.a?\.?|usa)\b", RegexOptions.Compiled), "america"),
+            // "in the us" means America, not "us" the word (which is filler and gets dropped).
+            (new Regex(@"\b(in|of|across|around|from) the us\b", RegexOptions.Compiled), "$1 america"),
+            (new Regex(@"\bus (states?|presidents?|capital|flag|army|money|dollar|history)\b", RegexOptions.Compiled), "america $1"),
             (new Regex(@"\bmade out of\b", RegexOptions.Compiled), "made of"),
             (new Regex(@"\b(go|goes|going|circle|circles|travel|travels|spin|spins|move|moves) (around|round)\b", RegexOptions.Compiled), "orbit"),
             (new Regex(@"\b(planet earth|our planet|our world|the world)\b", RegexOptions.Compiled), "earth"),

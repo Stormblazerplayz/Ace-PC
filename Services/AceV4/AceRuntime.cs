@@ -109,7 +109,31 @@ namespace Nimbus.AceV4
             Speech.Speaking += talking => { if (talking) WakeWord.Pause(); else WakeWord.Resume(); };
 
             // Say hi a few seconds after start, if this is the first time today.
-            _ = Task.Run(async () => { await Task.Delay(4000).ConfigureAwait(false); await MaybeGreetAsync("start").ConfigureAwait(false); });
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(4000).ConfigureAwait(false);
+                await MaybeGreetAsync("start").ConfigureAwait(false);
+                // Right after an update: show what's new, once.
+                await Task.Delay(2500).ConfigureAwait(false);
+                await MaybeShowWhatsNewAsync().ConfigureAwait(false);
+            });
+        }
+
+        /// <summary>After an update, Ace shows the "What's new" notes once (you can always ask "what's new").</summary>
+        public async Task MaybeShowWhatsNewAsync()
+        {
+            try
+            {
+                await _loaded.Task.ConfigureAwait(false);
+                string from = AutoUpdater.PendingWhatsNewFrom;
+                if (from.Length == 0) return;
+                var a = Brain.WhatsNewAnswer(from, AutoUpdater.CurrentText);
+                AutoUpdater.MarkWhatsNewShown();
+                Play(Sfx.Success, 0.8);
+                Raise(new StageEvent(StageKind.Answer, "", a));
+                Answered?.Invoke("", a);
+            }
+            catch (Exception ex) { Debug.WriteLine("Ace what's new: " + ex.Message); }
         }
 
         /// <summary>Hooks the main window for the Ctrl+Alt+Space hotkey and screen on/off messages.</summary>
@@ -200,18 +224,19 @@ namespace Nimbus.AceV4
 
         private void OnWakeWord() => _ = ListenAndAskAsync("wake word");
 
-        /// <summary>Starts Nimbus with Windows (current user only, no admin needed).</summary>
+        /// <summary>Starts Ace with Windows (current user only, no admin needed). Older versions used the name "Nimbus".</summary>
         private void ApplyAutostart()
         {
             try
             {
                 using var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", writable: true);
                 if (key == null) return;
+                if (key.GetValue("Nimbus") is string old && old.Contains("--background")) key.DeleteValue("Nimbus", false);
                 string? exe = Environment.ProcessPath;
                 if (Config.StartWithWindows && exe != null && exe.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-                    key.SetValue("Nimbus", "\"" + exe + "\" --background");
-                else if (!Config.StartWithWindows && key.GetValue("Nimbus") != null)
-                    key.DeleteValue("Nimbus", false);
+                    key.SetValue("Ace", "\"" + exe + "\" --background");
+                else if (!Config.StartWithWindows && key.GetValue("Ace") != null)
+                    key.DeleteValue("Ace", false);
             }
             catch { }
         }
@@ -246,7 +271,7 @@ namespace Nimbus.AceV4
                 Raise(new StageEvent(StageKind.Wake, label));
                 Play(Sfx.Wake, 0.6);
                 await Task.Delay(2500, ct).ConfigureAwait(false);
-            }, ct).ConfigureAwait(false);
+            }, ct, beta: Config.BetaChannel).ConfigureAwait(false);
             Changed?.Invoke();
             if (outcome == AutoUpdater.Outcome.Restarting)
                 Application.Current?.Dispatcher.BeginInvoke(() => Application.Current.Shutdown());

@@ -10,16 +10,18 @@ namespace Nimbus.Updater
     /// <summary>What the updater was asked to do (from its command line).</summary>
     public sealed class UpdateJob
     {
-        /// <summary>Nimbus's process id. The updater waits for it to close before touching any file.</summary>
+        /// <summary>Ace's process id. The updater waits for it to close before touching any file.</summary>
         public int Pid;
-        /// <summary>The new version's files (unzipped and checked by Nimbus).</summary>
+        /// <summary>The new version's files (unzipped and checked by Ace).</summary>
         public string Source = "";
-        /// <summary>Where Nimbus is installed (the files that get replaced).</summary>
+        /// <summary>Where Ace is installed (the files that get replaced).</summary>
         public string Target = "";
         /// <summary>Where the old version is copied first, so it can be put back.</summary>
         public string Backup = "";
-        /// <summary>The program to start afterwards, like NimbusV3Polish.exe.</summary>
+        /// <summary>The program to start afterwards, like Ace.exe.</summary>
         public string Exe = "";
+        /// <summary>The program that was running before (to start again if the update fails). Empty means the same as Exe.</summary>
+        public string OldExe = "";
         /// <summary>The file the new version writes once it started fine. Empty skips the check.</summary>
         public string OkFile = "";
         public string Log = "";
@@ -39,6 +41,7 @@ namespace Nimbus.Updater
                     case "--target": job.Target = v; break;
                     case "--backup": job.Backup = v; break;
                     case "--exe": job.Exe = v; break;
+                    case "--old-exe": job.OldExe = v; break;
                     case "--ok": job.OkFile = v; break;
                     case "--log": job.Log = v; break;
                     case "--wait-ok": if (int.TryParse(v, out int s)) job.WaitForOk = TimeSpan.FromSeconds(s); break;
@@ -47,14 +50,27 @@ namespace Nimbus.Updater
             }
             if (job.Source.Length == 0 || job.Target.Length == 0 || job.Backup.Length == 0 || job.Exe.Length == 0) return null;
             // The program to start must be a plain file name inside the install folder.
-            if (job.Exe != Path.GetFileName(job.Exe) || job.Exe.Contains('/') || job.Exe.Contains('\\') || job.Exe.Contains("..")) return null;
+            if (!PlainName(job.Exe)) return null;
+            if (job.OldExe.Length == 0) job.OldExe = job.Exe;
+            if (!PlainName(job.OldExe)) return null;
             return job;
+        }
+
+        private static bool PlainName(string exe) =>
+            exe == Path.GetFileName(exe) && !exe.Contains('/') && !exe.Contains('\\') && !exe.Contains("..") &&
+            exe.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>The files that belong to a program: Ace.exe, Ace.dll, Ace.pdb, Ace.deps.json, Ace.runtimeconfig.json.</summary>
+        public static string[] ProgramFiles(string exe)
+        {
+            string stem = Path.GetFileNameWithoutExtension(exe);
+            return new[] { stem + ".exe", stem + ".dll", stem + ".pdb", stem + ".deps.json", stem + ".runtimeconfig.json" };
         }
     }
 
     /// <summary>
-    /// Swaps Nimbus's files for a new version: waits for Nimbus to close, backs up the old files, copies the new
-    /// ones in, starts Nimbus again and waits for it to say it started fine. If anything goes wrong it puts the
+    /// Swaps Ace's files for a new version: waits for Ace to close, backs up the old files, copies the new
+    /// ones in, starts Ace again and waits for it to say it started fine. If anything goes wrong it puts the
     /// old files back and starts the old version. Files that aren't in the new version are never deleted.
     /// </summary>
     public static class UpdaterCore
@@ -86,11 +102,11 @@ namespace Nimbus.Updater
                 return Result.NothingChanged;
             }
 
-            // 1. Wait for Nimbus to close.
+            // 1. Wait for Ace to close.
             var until = DateTime.Now + job.WaitForExit;
             while (job.Pid > 0 && isRunning(job.Pid))
             {
-                if (DateTime.Now > until) { Log("Nimbus didn't close, so nothing changed."); return Result.NothingChanged; }
+                if (DateTime.Now > until) { Log("Ace didn't close, so nothing changed."); return Result.NothingChanged; }
                 Thread.Sleep(250);
             }
             Thread.Sleep(500);   // let Windows let go of the files
@@ -146,6 +162,15 @@ namespace Nimbus.Updater
                     Thread.Sleep(300);
                 }
             }
+            // The program got a new name (NimbusV3Polish.exe → Ace.exe): remove the old one so it can't be started by mistake.
+            // It's still in the backup folder.
+            if (!job.OldExe.Equals(job.Exe, StringComparison.OrdinalIgnoreCase))
+                foreach (var f in UpdateJob.ProgramFiles(job.OldExe))
+                {
+                    string path = Path.Combine(target, f);
+                    if (File.Exists(path) && !File.Exists(Path.Combine(source, f)))
+                        try { Retry(() => File.Delete(path)); Log("Removed the old " + f + "."); } catch (Exception ex) { Log("Couldn't remove " + f + ": " + ex.Message); }
+                }
             Log("Update done.");
             return Result.Updated;
 
@@ -173,10 +198,10 @@ namespace Nimbus.Updater
             {
                 try
                 {
-                    string old = Path.Combine(target, job.Exe);
+                    string old = Path.Combine(target, job.OldExe.Length > 0 ? job.OldExe : job.Exe);
                     if (File.Exists(old)) start(old);
                 }
-                catch (Exception ex) { Log("Couldn't start Nimbus again: " + ex.Message); }
+                catch (Exception ex) { Log("Couldn't start Ace again: " + ex.Message); }
             }
         }
 

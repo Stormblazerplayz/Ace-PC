@@ -38,7 +38,7 @@ namespace Nimbus.Services.Ace
 
         // ---- Personality ----
         public string SystemPrompt { get; set; } =
-            "You are Ace, the assistant inside Nimbus, a desktop app on Storm's Windows PC. " +
+            "You are Ace, a friendly assistant app on Storm's Windows PC. " +
             "Be friendly, quick and clear. Keep answers short unless asked for more.";
         /// <summary>female or male. Used for spoken replies.</summary>
         public string Voice { get; set; } = "female";
