@@ -26,7 +26,7 @@ namespace Nimbus.AceV4
     /// <summary>
     /// Keeps Ace V4 alive in the background: wakes every 15-30 minutes (random) to check the PC, greets you the
     /// first time you use the PC each day, nudges you toward bed, fires reminders, listens for "Hey Ace" and
-    /// Ctrl+Alt+Space, and plays the sounds. The eyes overlay and the Ace page both listen to it.
+    /// Ctrl+Alt+Space, and plays the sounds. The Ace window listens to it.
     /// </summary>
     public sealed class AceRuntime : IDisposable
     {
@@ -40,7 +40,7 @@ namespace Nimbus.AceV4
         public Dictation Dictation { get; } = new();
         public WakeWord WakeWord { get; } = new();
 
-        /// <summary>For the eyes overlay.</summary>
+        /// <summary>For the Ace window (orb moods, status and answers).</summary>
         public event Action<StageEvent>? Stage;
         /// <summary>Every answer (asked or found by a check), for the Ace page's conversation.</summary>
         public event Action<string, AceAnswer>? Answered;
@@ -54,7 +54,7 @@ namespace Nimbus.AceV4
         public bool ScreenOn { get; private set; } = true;
         public bool Away { get; private set; }
         public bool PageVisible { get; set; }
-        /// <summary>Where the eyes are looking, -1 (left) to 1 (right). The overlay sets it; sounds follow it.</summary>
+        /// <summary>Where the eyes are looking, -1 (left) to 1 (right). Sounds follow it.</summary>
         public double EyePan { get; set; }
 
         private readonly TaskCompletionSource<bool> _loaded = new(TaskCreationOptions.RunContinuationsAsynchronously);

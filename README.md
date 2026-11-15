@@ -19,16 +19,20 @@ Everything Ace saves stays on your PC, in `%LOCALAPPDATA%\Nimbus` (the folder na
 
 The orb shows what Ace is doing, with the same colors as the iPad app: blue when it's ready, bright blue with rings when it's listening, gold with a spinning ring when it's thinking, little bars when it's talking, dots while you type, dim when you're away. When it looks at something (a PC check, "Good to see you!") it stretches into a pill with two eyes. A green ring fills around it during a focus round.
 
-Each answer has **How I got this**: the steps Ace took and where the answer came from. Right-click a message to copy it. The little Ace pop-up still slides out when Ace talks while its window is minimized or behind other windows.
+Each answer has **How I got this**: the steps Ace took and where the answer came from. Right-click a message to copy it.
+
+Ace is a normal Windows window: taskbar button, Start menu shortcut, minimize / maximize / close, and you can drag the edges to resize it. There is **no pop-up** over your screen. When Ace has something to say while you're in another app, its taskbar button lights up and the message waits in the chat.
 
 Starting Ace a second time just brings the open window to the front. "Start Ace with Windows" (Settings > Waking up) starts it minimized when you sign in.
 
 ## Install it (Windows 10 or 11)
 
-1. Download `NimbusAce-win-x64.zip` from the newest release at **github.com/Stormblazerplayz/Ace-PC/releases** (or use `Ace-PC-Ready.zip`).
-2. Unzip it to a folder it can stay in, like `%LOCALAPPDATA%\Programs\Ace`. Keep `Ace.exe`, `NimbusUpdater.exe` and the `Data` folder together.
-3. Double-click **Ace.exe**. If Windows says "Windows protected your PC", click **More info** then **Run anyway**.
-4. Optional, once: right-click `Setup-AceV4.ps1` > **Run with PowerShell**. It downloads Ace's meaning net (about 90 MB) so Ace understands more ways of asking.
+1. Download **Ace-Setup.exe** from the newest release at **github.com/Stormblazerplayz/Ace-PC/releases**.
+2. Double-click it. If Windows says "Windows protected your PC", click **More info** then **Run anyway**. No admin needed: it installs just for you into `%LOCALAPPDATA%\Programs\Ace`.
+3. Ace opens. Find it again any time in the **Start menu** (tick "Put Ace on the desktop" in the installer for a desktop icon too). Uninstall it from **Settings > Apps**.
+4. Optional, once: right-click `Setup-AceV4.ps1` in Ace's folder > **Run with PowerShell**. It downloads Ace's meaning net (about 90 MB) so Ace understands more ways of asking.
+
+Prefer no installer? Unzip `NimbusAce-win-x64.zip` from the same release into a folder it can stay in and double-click `Ace.exe` (keep `Ace.exe`, `NimbusUpdater.exe` and `Data` together). Both copies update themselves.
 
 **Tip:** for "Hey Ace" and Windows dictation, add the English speech pack under Windows **Settings > Time & language > Speech**.
 
@@ -49,7 +53,7 @@ Ace checks **github.com/Stormblazerplayz/Ace-PC** for a new release when it star
 
 1. Add notes for it to `Data/whats-new.json` and push your changes to the Ace-PC repo.
 2. On the repo's GitHub page open **Actions > Release > Run workflow**, type the version (like `4.1.1`, or `4.2.0-beta.1` for a beta) and press **Run workflow**. Or push a tag: `git tag v4.1.1` then `git push origin v4.1.1`.
-3. GitHub Actions (`.github/workflows/release.yml`) builds Ace, zips it, makes the `.sha256` file and publishes the release. Every Ace with auto-update on picks it up within 6 hours. Tags with a dash become pre-releases, which only go to people on the beta.
+3. GitHub Actions (`.github/workflows/release.yml`) builds Ace, zips it, makes the `.sha256` file and `Ace-Setup.exe`, runs `Tools/Test-Ace.ps1` (opens Ace on Windows, asks it a question, installs and uninstalls it) and only then publishes the release. Every Ace with auto-update on picks it up within 6 hours. Tags with a dash become pre-releases, which only go to people on the beta.
 
 ## What Ace can do
 
@@ -113,7 +117,6 @@ Ace V4 is a lot smarter than V3 at everyday stuff, but it isn't an LLM like Clau
 App.xaml(.cs)                   starts Ace (one copy at a time) and opens the Ace window
 Windows/AceWindow.cs            the Ace window: orb, chat, talk bar, timers, Settings/Calendar/Memories/Scripts sheets
 Controls/AceOrb.cs              the orb: shading, swirl, moods, eyes, listening rings, thinking ring, focus ring
-Windows/AceOverlay.cs           the little pop-up when Ace talks while its window is hidden
 Controls/AceCardViews.cs        recipe, cooking, timers, focus, report card, results, stats, weather, calendar, sleep, confirm, countdown cards
 Controls/AceMoreCards.cs        homework steps, memory, notes, shopping, translate, trivia, 20 questions, music, screen text, screen time, convert and code cards
 Controls/AceSettingsView.cs     Ace's settings
@@ -129,6 +132,9 @@ Services/Calendar/              Ace's calendar (saved in calendar.json)
 Data/                           Q&A bank, general facts, recipes, replies, scripts, whats-new.json
 Updater/                        NimbusUpdater.exe: swaps the files, keeps a backup, rolls back
 Setup-AceV4.ps1                 downloads the meaning net (run once)
-Build-Release.ps1               builds the release zip on Windows
-.github/workflows/release.yml   builds and publishes a release
+Build-Release.ps1               builds the release zip and Ace-Setup.exe on Windows
+Installer/Ace.iss               the installer (Inno Setup 6): Start menu, desktop icon, uninstaller
+Tools/Test-Ace.ps1              the Windows check: smoke test, install, uninstall
+.github/workflows/build.yml     builds and tests every change
+.github/workflows/release.yml   builds, tests and publishes a release
 ```

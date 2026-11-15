@@ -1,4 +1,22 @@
 {
+ "4.2.0": [
+  {
+   "title": "No more pop-up",
+   "text": "The little floating Ace bubble at the top of the screen is gone for good. Ace lives in its own window now."
+  },
+  {
+   "title": "A real Windows app",
+   "text": "Ace has a taskbar button, a Start menu shortcut, and minimize, maximize and close buttons. Drag the edges to resize it."
+  },
+  {
+   "title": "Ace-Setup.exe",
+   "text": "Install Ace with one click. It goes in the Start menu (and the desktop if you want), and you can uninstall it from Settings > Apps."
+  },
+  {
+   "title": "Quiet heads-ups",
+   "text": "When I have something to say and you're in another app, my taskbar button lights up instead of popping up over your screen."
+  }
+ ],
  "4.1.0": [
   {
    "title": "Ace is its own app now",

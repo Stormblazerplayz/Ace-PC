@@ -16,7 +16,7 @@
     <SelfContained>false</SelfContained>
     <!-- Ace's version. The GitHub release workflow sets it from the tag (v4.0.1 → 4.0.1), and the
          auto-updater compares it with the newest release. -->
-    <Version>4.1.0</Version>
+    <Version>4.2.0</Version>
     <ApplicationIcon>Ace.ico</ApplicationIcon>
     <Product>Ace</Product>
     <AssemblyTitle>Ace</AssemblyTitle>

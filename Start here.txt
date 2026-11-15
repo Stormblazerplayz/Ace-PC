@@ -1,6 +1,9 @@
 ACE FOR PC: START HERE
 ======================
 
+Easiest: run Ace-Setup.exe from the GitHub release instead. It puts Ace in the Start menu
+and you can uninstall it from Settings > Apps. Otherwise, follow these steps for this folder:
+
 1. Move this whole folder somewhere it can stay, like:
       C:\Users\<you>\AppData\Local\Programs\Ace
    (Keep Ace.exe, NimbusUpdater.exe and the Data folder together.)
