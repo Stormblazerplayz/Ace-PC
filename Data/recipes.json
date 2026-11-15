@@ -1,0 +1,1185 @@
+{
+ "version": 1,
+ "recipes": [
+  {
+   "id": "pancakes",
+   "name": "Fluffy Pancakes",
+   "aliases": [
+    "pancake",
+    "hotcakes",
+    "flapjacks"
+   ],
+   "kind": "breakfast",
+   "time": "20 minutes",
+   "serves": "8 pancakes",
+   "grownUp": true,
+   "ingredients": [
+    "1 cup flour",
+    "2 tablespoons sugar",
+    "2 teaspoons baking powder",
+    "1/4 teaspoon salt",
+    "1 cup milk",
+    "1 egg",
+    "2 tablespoons melted butter",
+    "Butter or oil for the pan"
+   ],
+   "steps": [
+    "Mix the flour, sugar, baking powder and salt in a big bowl.",
+    "In another bowl, whisk the milk, egg and melted butter.",
+    "Pour the wet mix into the dry mix and stir until just combined. A few lumps are fine.",
+    "Heat a pan on medium and add a little butter.",
+    "Pour about 1/4 cup of batter for each pancake.",
+    "Cook for 2 minutes, until bubbles pop on top, then flip.",
+    "Cook the other side for 1 minute until golden. Serve with syrup or fruit."
+   ]
+  },
+  {
+   "id": "waffles",
+   "name": "Crispy Waffles",
+   "aliases": [
+    "waffle"
+   ],
+   "kind": "breakfast",
+   "time": "25 minutes",
+   "serves": "4 waffles",
+   "grownUp": true,
+   "ingredients": [
+    "2 cups flour",
+    "1 tablespoon sugar",
+    "1 tablespoon baking powder",
+    "1/2 teaspoon salt",
+    "1 3/4 cups milk",
+    "2 eggs",
+    "1/2 cup melted butter",
+    "1 teaspoon vanilla"
+   ],
+   "steps": [
+    "Heat up the waffle iron.",
+    "Mix the flour, sugar, baking powder and salt in a bowl.",
+    "Whisk the milk, eggs, melted butter and vanilla in another bowl.",
+    "Stir the wet mix into the dry mix until just combined.",
+    "Spray the waffle iron and pour in enough batter to cover it.",
+    "Close it and cook for 4 minutes, until golden and crispy.",
+    "Repeat with the rest of the batter."
+   ]
+  },
+  {
+   "id": "french_toast",
+   "name": "French Toast",
+   "aliases": [
+    "eggy bread"
+   ],
+   "kind": "breakfast",
+   "time": "15 minutes",
+   "serves": "4 slices",
+   "grownUp": true,
+   "ingredients": [
+    "4 slices of bread",
+    "2 eggs",
+    "1/2 cup milk",
+    "1 teaspoon cinnamon",
+    "1 teaspoon vanilla",
+    "Butter for the pan"
+   ],
+   "steps": [
+    "Whisk the eggs, milk, cinnamon and vanilla in a shallow dish.",
+    "Heat a pan on medium and melt a little butter.",
+    "Dip a slice of bread in the egg mix, flipping so both sides soak.",
+    "Cook it for 2 minutes per side, until golden.",
+    "Repeat with the other slices. Top with syrup, powdered sugar or berries."
+   ]
+  },
+  {
+   "id": "scrambled_eggs",
+   "name": "Scrambled Eggs",
+   "aliases": [
+    "eggs",
+    "scrambled egg"
+   ],
+   "kind": "breakfast",
+   "time": "8 minutes",
+   "serves": "1 person",
+   "grownUp": true,
+   "ingredients": [
+    "2 eggs",
+    "1 tablespoon milk",
+    "1 pinch of salt",
+    "1 teaspoon butter"
+   ],
+   "steps": [
+    "Crack the eggs into a bowl, add the milk and salt, and whisk with a fork.",
+    "Melt the butter in a pan on medium-low heat.",
+    "Pour in the eggs and wait 20 seconds.",
+    "Gently push the eggs around with a spatula until soft curds form, about 3 minutes.",
+    "Take them off the heat while they still look a little wet. They finish cooking on the plate."
+   ]
+  },
+  {
+   "id": "omelette",
+   "name": "Cheese Omelette",
+   "aliases": [
+    "omelet",
+    "cheese omelette"
+   ],
+   "kind": "breakfast",
+   "time": "10 minutes",
+   "serves": "1 person",
+   "grownUp": true,
+   "ingredients": [
+    "2 eggs",
+    "1 tablespoon milk",
+    "1 pinch of salt",
+    "1 teaspoon butter",
+    "1/4 cup shredded cheese",
+    "Optional: ham, peppers or spinach"
+   ],
+   "steps": [
+    "Whisk the eggs, milk and salt in a bowl.",
+    "Melt the butter in a small pan on medium heat.",
+    "Pour in the eggs and tilt the pan so they spread out.",
+    "Cook for 2 minutes, lifting the edges so the runny egg slides under.",
+    "Sprinkle the cheese and fillings on one half.",
+    "Fold the other half over and cook for 1 minute more, then slide it onto a plate."
+   ]
+  },
+  {
+   "id": "overnight_oats",
+   "name": "Overnight Oats",
+   "aliases": [
+    "oats",
+    "oatmeal jar"
+   ],
+   "kind": "breakfast",
+   "time": "5 minutes, plus a night in the fridge",
+   "serves": "1 jar",
+   "grownUp": false,
+   "ingredients": [
+    "1/2 cup rolled oats",
+    "1/2 cup milk",
+    "1/4 cup yogurt",
+    "1 tablespoon honey or maple syrup",
+    "1 handful of berries or banana slices"
+   ],
+   "steps": [
+    "Put the oats, milk, yogurt and honey in a jar.",
+    "Stir well and put the lid on.",
+    "Leave it in the fridge overnight, or for at least 4 hours.",
+    "In the morning, stir it and add the fruit on top."
+   ]
+  },
+  {
+   "id": "yogurt_parfait",
+   "name": "Yogurt Parfait",
+   "aliases": [
+    "parfait"
+   ],
+   "kind": "breakfast",
+   "time": "5 minutes",
+   "serves": "1 cup",
+   "grownUp": false,
+   "ingredients": [
+    "1 cup yogurt",
+    "1/2 cup granola",
+    "1/2 cup berries",
+    "1 drizzle of honey"
+   ],
+   "steps": [
+    "Spoon some yogurt into a glass.",
+    "Add a layer of granola, then a layer of berries.",
+    "Repeat the layers until the glass is full.",
+    "Drizzle honey on top and eat it right away so the granola stays crunchy."
+   ]
+  },
+  {
+   "id": "chocolate_chip_cookies",
+   "name": "Chocolate Chip Cookies",
+   "aliases": [
+    "cookies",
+    "cookie",
+    "choc chip cookies",
+    "chocolate cookies"
+   ],
+   "kind": "dessert",
+   "time": "30 minutes",
+   "serves": "24 cookies",
+   "grownUp": true,
+   "ingredients": [
+    "1 cup soft butter",
+    "3/4 cup white sugar",
+    "3/4 cup brown sugar",
+    "2 eggs",
+    "1 teaspoon vanilla",
+    "2 1/4 cups flour",
+    "1 teaspoon baking soda",
+    "1/2 teaspoon salt",
+    "2 cups chocolate chips"
+   ],
+   "steps": [
+    "Heat the oven to 375 F (190 C) and line a baking tray with paper.",
+    "Beat the butter and both sugars until fluffy.",
+    "Beat in the eggs and vanilla.",
+    "Stir in the flour, baking soda and salt.",
+    "Fold in the chocolate chips.",
+    "Scoop balls of dough about 2 inches apart on the tray.",
+    "Bake for 10 minutes, until the edges are golden.",
+    "Let them cool on the tray for 5 minutes before moving them."
+   ]
+  },
+  {
+   "id": "sugar_cookies",
+   "name": "Sugar Cookies",
+   "aliases": [
+    "sugar cookie"
+   ],
+   "kind": "dessert",
+   "time": "30 minutes",
+   "serves": "20 cookies",
+   "grownUp": true,
+   "ingredients": [
+    "1 cup soft butter",
+    "1 cup sugar",
+    "1 egg",
+    "1 teaspoon vanilla",
+    "2 1/2 cups flour",
+    "1 teaspoon baking powder",
+    "1/4 teaspoon salt",
+    "Sprinkles"
+   ],
+   "steps": [
+    "Heat the oven to 350 F (175 C) and line a tray with paper.",
+    "Beat the butter and sugar until fluffy, then beat in the egg and vanilla.",
+    "Stir in the flour, baking powder and salt.",
+    "Roll the dough into balls, roll them in sprinkles and put them on the tray.",
+    "Flatten each one a little with a glass.",
+    "Bake for 9 minutes, until the edges are just set.",
+    "Cool for 5 minutes on the tray."
+   ]
+  },
+  {
+   "id": "peanut_butter_cookies",
+   "name": "3-Ingredient Peanut Butter Cookies",
+   "aliases": [
+    "peanut butter cookie",
+    "pb cookies"
+   ],
+   "kind": "dessert",
+   "time": "20 minutes",
+   "serves": "12 cookies",
+   "grownUp": true,
+   "ingredients": [
+    "1 cup peanut butter",
+    "1/2 cup sugar",
+    "1 egg"
+   ],
+   "steps": [
+    "Heat the oven to 350 F (175 C) and line a tray with paper.",
+    "Mix the peanut butter, sugar and egg until smooth.",
+    "Roll into 12 balls and put them on the tray.",
+    "Press a fork into each one twice to make a criss-cross.",
+    "Bake for 10 minutes.",
+    "Let them cool for 10 minutes. They firm up as they cool."
+   ]
+  },
+  {
+   "id": "brownies",
+   "name": "Fudgy Brownies",
+   "aliases": [
+    "brownie",
+    "chocolate brownies"
+   ],
+   "kind": "dessert",
+   "time": "40 minutes",
+   "serves": "16 squares",
+   "grownUp": true,
+   "ingredients": [
+    "1/2 cup butter",
+    "1 cup sugar",
+    "2 eggs",
+    "1 teaspoon vanilla",
+    "1/3 cup cocoa powder",
+    "1/2 cup flour",
+    "1/4 teaspoon salt",
+    "1/4 teaspoon baking powder"
+   ],
+   "steps": [
+    "Heat the oven to 350 F (175 C) and grease an 8-inch square pan.",
+    "Melt the butter, then stir in the sugar, eggs and vanilla.",
+    "Stir in the cocoa, flour, salt and baking powder.",
+    "Spread the batter in the pan.",
+    "Bake for 25 minutes, until a toothpick comes out with a few moist crumbs.",
+    "Cool for 15 minutes before cutting."
+   ]
+  },
+  {
+   "id": "banana_bread",
+   "name": "Banana Bread",
+   "aliases": [
+    "banana loaf"
+   ],
+   "kind": "dessert",
+   "time": "1 hour 15 minutes",
+   "serves": "1 loaf",
+   "grownUp": true,
+   "ingredients": [
+    "3 very ripe bananas",
+    "1/3 cup melted butter",
+    "3/4 cup sugar",
+    "1 egg",
+    "1 teaspoon vanilla",
+    "1 teaspoon baking soda",
+    "1 pinch of salt",
+    "1 1/2 cups flour"
+   ],
+   "steps": [
+    "Heat the oven to 350 F (175 C) and grease a loaf pan.",
+    "Mash the bananas in a big bowl.",
+    "Stir in the melted butter, sugar, egg and vanilla.",
+    "Sprinkle in the baking soda and salt, then stir in the flour.",
+    "Pour the batter into the pan.",
+    "Bake for 55 minutes, until a toothpick comes out clean.",
+    "Cool for 10 minutes, then take it out of the pan."
+   ]
+  },
+  {
+   "id": "blueberry_muffins",
+   "name": "Blueberry Muffins",
+   "aliases": [
+    "muffins",
+    "muffin"
+   ],
+   "kind": "breakfast",
+   "time": "35 minutes",
+   "serves": "12 muffins",
+   "grownUp": true,
+   "ingredients": [
+    "2 cups flour",
+    "3/4 cup sugar",
+    "2 teaspoons baking powder",
+    "1/2 teaspoon salt",
+    "1/3 cup oil",
+    "1 egg",
+    "3/4 cup milk",
+    "1 cup blueberries"
+   ],
+   "steps": [
+    "Heat the oven to 400 F (200 C) and put paper cups in a muffin tin.",
+    "Mix the flour, sugar, baking powder and salt.",
+    "Whisk the oil, egg and milk, then stir them into the dry mix.",
+    "Gently fold in the blueberries.",
+    "Fill each cup about 3/4 full.",
+    "Bake for 20 minutes, until golden on top.",
+    "Cool for 5 minutes in the tin."
+   ]
+  },
+  {
+   "id": "mug_cake",
+   "name": "Chocolate Mug Cake",
+   "aliases": [
+    "mug cake",
+    "microwave cake",
+    "cake in a mug"
+   ],
+   "kind": "dessert",
+   "time": "5 minutes",
+   "serves": "1 mug",
+   "grownUp": false,
+   "ingredients": [
+    "4 tablespoons flour",
+    "3 tablespoons sugar",
+    "2 tablespoons cocoa powder",
+    "1/4 teaspoon baking powder",
+    "3 tablespoons milk",
+    "2 tablespoons oil",
+    "1 tablespoon chocolate chips"
+   ],
+   "steps": [
+    "Mix the flour, sugar, cocoa and baking powder in a big mug.",
+    "Stir in the milk and oil until smooth.",
+    "Drop the chocolate chips on top.",
+    "Microwave for 1 minute.",
+    "Let it cool for 1 minute. The mug is hot, so hold it by the handle."
+   ]
+  },
+  {
+   "id": "cupcakes",
+   "name": "Vanilla Cupcakes",
+   "aliases": [
+    "cupcake",
+    "cake"
+   ],
+   "kind": "dessert",
+   "time": "40 minutes",
+   "serves": "12 cupcakes",
+   "grownUp": true,
+   "ingredients": [
+    "1 1/2 cups flour",
+    "1 cup sugar",
+    "1 1/2 teaspoons baking powder",
+    "1/4 teaspoon salt",
+    "1/2 cup soft butter",
+    "2 eggs",
+    "1/2 cup milk",
+    "2 teaspoons vanilla",
+    "Frosting and sprinkles"
+   ],
+   "steps": [
+    "Heat the oven to 350 F (175 C) and put paper cups in a muffin tin.",
+    "Mix the flour, sugar, baking powder and salt.",
+    "Add the butter, eggs, milk and vanilla and beat for 2 minutes until smooth.",
+    "Fill each cup halfway.",
+    "Bake for 18 minutes, until a toothpick comes out clean.",
+    "Cool completely, about 30 minutes, then frost and add sprinkles."
+   ]
+  },
+  {
+   "id": "rice_krispie_treats",
+   "name": "Crispy Rice Treats",
+   "aliases": [
+    "rice krispie treats",
+    "rice crispy treats",
+    "marshmallow squares"
+   ],
+   "kind": "dessert",
+   "time": "15 minutes",
+   "serves": "12 squares",
+   "grownUp": true,
+   "ingredients": [
+    "3 tablespoons butter",
+    "1 bag (10 ounces) of marshmallows",
+    "6 cups crispy rice cereal"
+   ],
+   "steps": [
+    "Grease a 9 by 13 inch pan.",
+    "Melt the butter in a big pot on low heat.",
+    "Add the marshmallows and stir until melted.",
+    "Take it off the heat and stir in the cereal.",
+    "Press it into the pan with a greased spatula.",
+    "Let it cool for 30 minutes, then cut into squares."
+   ]
+  },
+  {
+   "id": "energy_bites",
+   "name": "No-Bake Energy Bites",
+   "aliases": [
+    "energy balls",
+    "protein balls",
+    "no bake bites"
+   ],
+   "kind": "snack",
+   "time": "15 minutes",
+   "serves": "16 bites",
+   "grownUp": false,
+   "ingredients": [
+    "1 cup rolled oats",
+    "1/2 cup peanut butter",
+    "1/3 cup honey",
+    "1/2 cup mini chocolate chips",
+    "1 teaspoon vanilla"
+   ],
+   "steps": [
+    "Mix everything in a bowl.",
+    "Chill it in the fridge for 20 minutes so it's easier to roll.",
+    "Roll into small balls.",
+    "Keep them in the fridge for up to a week."
+   ]
+  },
+  {
+   "id": "mac_and_cheese",
+   "name": "Stovetop Mac and Cheese",
+   "aliases": [
+    "mac n cheese",
+    "macaroni and cheese",
+    "macaroni cheese"
+   ],
+   "kind": "dinner",
+   "time": "20 minutes",
+   "serves": "4 people",
+   "grownUp": true,
+   "ingredients": [
+    "2 cups elbow macaroni",
+    "2 tablespoons butter",
+    "2 tablespoons flour",
+    "1 1/2 cups milk",
+    "2 cups shredded cheddar",
+    "1/2 teaspoon salt"
+   ],
+   "steps": [
+    "Boil the macaroni in salted water for 8 minutes, then drain it.",
+    "In the same pot, melt the butter on medium heat.",
+    "Stir in the flour for 1 minute.",
+    "Slowly whisk in the milk and cook until it thickens, about 3 minutes.",
+    "Turn off the heat and stir in the cheese and salt until melted.",
+    "Stir the macaroni back in and serve."
+   ]
+  },
+  {
+   "id": "spaghetti",
+   "name": "Spaghetti with Tomato Sauce",
+   "aliases": [
+    "pasta",
+    "spaghetti and sauce",
+    "pasta with tomato sauce"
+   ],
+   "kind": "dinner",
+   "time": "25 minutes",
+   "serves": "4 people",
+   "grownUp": true,
+   "ingredients": [
+    "1 pound (450 g) spaghetti",
+    "2 tablespoons olive oil",
+    "2 cloves garlic, chopped",
+    "1 can (28 ounces) crushed tomatoes",
+    "1 teaspoon salt",
+    "1 teaspoon dried basil",
+    "Parmesan cheese"
+   ],
+   "steps": [
+    "Boil a big pot of salted water.",
+    "Cook the spaghetti for 10 minutes, then drain it.",
+    "While it cooks, heat the oil in a pan and cook the garlic for 1 minute.",
+    "Add the tomatoes, salt and basil and simmer for 15 minutes.",
+    "Toss the spaghetti with the sauce and top with Parmesan."
+   ]
+  },
+  {
+   "id": "grilled_cheese",
+   "name": "Grilled Cheese",
+   "aliases": [
+    "grilled cheese sandwich",
+    "cheese toastie"
+   ],
+   "kind": "lunch",
+   "time": "10 minutes",
+   "serves": "1 sandwich",
+   "grownUp": true,
+   "ingredients": [
+    "2 slices of bread",
+    "2 slices of cheese",
+    "1 tablespoon soft butter"
+   ],
+   "steps": [
+    "Butter one side of each slice of bread.",
+    "Put one slice butter-side down in a cold pan and add the cheese.",
+    "Put the other slice on top, butter-side up.",
+    "Cook on medium-low for 3 minutes until golden.",
+    "Flip and cook for 3 minutes more, until the cheese melts."
+   ]
+  },
+  {
+   "id": "quesadilla",
+   "name": "Cheese Quesadilla",
+   "aliases": [
+    "quesadillas"
+   ],
+   "kind": "lunch",
+   "time": "10 minutes",
+   "serves": "1 person",
+   "grownUp": true,
+   "ingredients": [
+    "2 flour tortillas",
+    "1 cup shredded cheese",
+    "Optional: beans, chicken or salsa"
+   ],
+   "steps": [
+    "Put one tortilla in a pan on medium heat.",
+    "Sprinkle the cheese and any fillings on top.",
+    "Put the second tortilla on top.",
+    "Cook for 2 minutes until the bottom is golden.",
+    "Flip it carefully and cook for 2 minutes more.",
+    "Cut into triangles and serve with salsa."
+   ]
+  },
+  {
+   "id": "tacos",
+   "name": "Beef Tacos",
+   "aliases": [
+    "taco",
+    "taco night"
+   ],
+   "kind": "dinner",
+   "time": "25 minutes",
+   "serves": "4 people",
+   "grownUp": true,
+   "ingredients": [
+    "1 pound (450 g) ground beef",
+    "1 packet taco seasoning (or 1 tablespoon chili powder, 1 teaspoon cumin, 1/2 teaspoon salt)",
+    "1/2 cup water",
+    "8 taco shells",
+    "Shredded lettuce",
+    "Shredded cheese",
+    "Chopped tomatoes",
+    "Salsa"
+   ],
+   "steps": [
+    "Brown the beef in a pan on medium-high heat for 7 minutes, breaking it up.",
+    "Drain off the extra fat.",
+    "Stir in the seasoning and water and simmer for 5 minutes.",
+    "Warm the taco shells in the oven or microwave.",
+    "Fill the shells with beef and add lettuce, cheese, tomatoes and salsa."
+   ]
+  },
+  {
+   "id": "pizza",
+   "name": "Quick Pita Pizzas",
+   "aliases": [
+    "pizza",
+    "homemade pizza",
+    "mini pizza"
+   ],
+   "kind": "dinner",
+   "time": "15 minutes",
+   "serves": "4 pizzas",
+   "grownUp": true,
+   "ingredients": [
+    "4 pitas or naan breads",
+    "1/2 cup pizza sauce",
+    "1 1/2 cups shredded mozzarella",
+    "Toppings: pepperoni, peppers, mushrooms"
+   ],
+   "steps": [
+    "Heat the oven to 425 F (220 C).",
+    "Put the pitas on a baking tray.",
+    "Spread sauce on each one and sprinkle the cheese.",
+    "Add your toppings.",
+    "Bake for 10 minutes, until the cheese bubbles."
+   ]
+  },
+  {
+   "id": "fried_rice",
+   "name": "Egg Fried Rice",
+   "aliases": [
+    "fried rice"
+   ],
+   "kind": "dinner",
+   "time": "15 minutes",
+   "serves": "2 people",
+   "grownUp": true,
+   "ingredients": [
+    "2 cups cooked rice (cold is best)",
+    "1 tablespoon oil",
+    "2 eggs",
+    "1 cup frozen peas and carrots",
+    "2 tablespoons soy sauce",
+    "2 green onions, sliced"
+   ],
+   "steps": [
+    "Heat the oil in a big pan on medium-high.",
+    "Add the peas and carrots and cook for 3 minutes.",
+    "Push them to the side, crack in the eggs and scramble them.",
+    "Add the rice and stir-fry for 3 minutes.",
+    "Stir in the soy sauce and green onions and serve."
+   ]
+  },
+  {
+   "id": "ramen",
+   "name": "Upgraded Instant Ramen",
+   "aliases": [
+    "instant ramen",
+    "noodles",
+    "ramen noodles"
+   ],
+   "kind": "lunch",
+   "time": "10 minutes",
+   "serves": "1 bowl",
+   "grownUp": true,
+   "ingredients": [
+    "1 pack of instant ramen",
+    "2 cups water",
+    "1 egg",
+    "1 handful of frozen veggies",
+    "1 green onion, sliced",
+    "1 teaspoon soy sauce"
+   ],
+   "steps": [
+    "Bring the water to a boil.",
+    "Add the noodles and veggies and cook for 2 minutes.",
+    "Crack in the egg and cook for 1 minute more without stirring.",
+    "Turn off the heat and stir in half the flavor packet and the soy sauce.",
+    "Top with green onion."
+   ]
+  },
+  {
+   "id": "chicken_nuggets",
+   "name": "Baked Chicken Nuggets",
+   "aliases": [
+    "nuggets",
+    "chicken tenders",
+    "chicken strips"
+   ],
+   "kind": "dinner",
+   "time": "30 minutes",
+   "serves": "4 people",
+   "grownUp": true,
+   "ingredients": [
+    "2 chicken breasts, cut into bite-size pieces",
+    "1 egg",
+    "1 cup breadcrumbs",
+    "1/4 cup grated Parmesan",
+    "1/2 teaspoon salt",
+    "1/2 teaspoon garlic powder"
+   ],
+   "steps": [
+    "Heat the oven to 400 F (200 C) and line a tray with paper.",
+    "Whisk the egg in a bowl.",
+    "Mix the breadcrumbs, Parmesan, salt and garlic powder in another bowl.",
+    "Dip each piece in egg, then roll it in crumbs and put it on the tray.",
+    "Bake for 18 minutes, flipping halfway, until cooked through.",
+    "Wash your hands after touching raw chicken!"
+   ]
+  },
+  {
+   "id": "burgers",
+   "name": "Classic Burgers",
+   "aliases": [
+    "burger",
+    "hamburgers",
+    "cheeseburger"
+   ],
+   "kind": "dinner",
+   "time": "25 minutes",
+   "serves": "4 burgers",
+   "grownUp": true,
+   "ingredients": [
+    "1 pound (450 g) ground beef",
+    "1/2 teaspoon salt",
+    "1/4 teaspoon pepper",
+    "4 burger buns",
+    "4 slices of cheese",
+    "Lettuce, tomato, ketchup"
+   ],
+   "steps": [
+    "Split the beef into 4 balls and flatten them into patties.",
+    "Sprinkle both sides with salt and pepper.",
+    "Cook in a hot pan or grill for 4 minutes.",
+    "Flip, add cheese, and cook for 4 minutes more.",
+    "Rest for 2 minutes, then put them in the buns with your toppings."
+   ]
+  },
+  {
+   "id": "garlic_bread",
+   "name": "Garlic Bread",
+   "aliases": [
+    "garlic toast"
+   ],
+   "kind": "side",
+   "time": "15 minutes",
+   "serves": "4 people",
+   "grownUp": true,
+   "ingredients": [
+    "1 baguette",
+    "1/2 cup soft butter",
+    "3 cloves garlic, minced",
+    "1 tablespoon chopped parsley",
+    "1 pinch of salt"
+   ],
+   "steps": [
+    "Heat the oven to 400 F (200 C).",
+    "Cut the baguette in half the long way.",
+    "Mix the butter, garlic, parsley and salt.",
+    "Spread it on the cut sides.",
+    "Bake for 10 minutes until golden.",
+    "Slice and serve."
+   ]
+  },
+  {
+   "id": "nachos",
+   "name": "Cheesy Nachos",
+   "aliases": [
+    "nacho"
+   ],
+   "kind": "snack",
+   "time": "15 minutes",
+   "serves": "4 people",
+   "grownUp": true,
+   "ingredients": [
+    "1 bag of tortilla chips",
+    "2 cups shredded cheese",
+    "1 can black beans, drained",
+    "Salsa",
+    "Sour cream"
+   ],
+   "steps": [
+    "Heat the oven to 400 F (200 C).",
+    "Spread the chips on a baking tray.",
+    "Sprinkle on the beans and cheese.",
+    "Bake for 6 minutes, until the cheese melts.",
+    "Top with salsa and sour cream."
+   ]
+  },
+  {
+   "id": "guacamole",
+   "name": "Guacamole",
+   "aliases": [
+    "guac"
+   ],
+   "kind": "snack",
+   "time": "10 minutes",
+   "serves": "4 people",
+   "grownUp": false,
+   "ingredients": [
+    "2 ripe avocados",
+    "1/2 lime",
+    "1/4 teaspoon salt",
+    "2 tablespoons chopped onion",
+    "1 small tomato, chopped",
+    "1 tablespoon chopped cilantro"
+   ],
+   "steps": [
+    "Cut the avocados in half, take out the pits and scoop them into a bowl.",
+    "Mash them with a fork.",
+    "Squeeze in the lime juice and add the salt.",
+    "Stir in the onion, tomato and cilantro.",
+    "Serve right away with chips."
+   ]
+  },
+  {
+   "id": "salsa",
+   "name": "Fresh Salsa",
+   "aliases": [
+    "pico de gallo",
+    "tomato salsa"
+   ],
+   "kind": "snack",
+   "time": "10 minutes",
+   "serves": "4 people",
+   "grownUp": false,
+   "ingredients": [
+    "4 tomatoes, chopped",
+    "1/2 onion, chopped",
+    "1 handful of cilantro, chopped",
+    "1 lime",
+    "1/2 teaspoon salt"
+   ],
+   "steps": [
+    "Put the tomatoes, onion and cilantro in a bowl.",
+    "Squeeze in the lime juice.",
+    "Add the salt and stir.",
+    "Let it sit for 10 minutes so the flavors mix."
+   ]
+  },
+  {
+   "id": "popcorn",
+   "name": "Stovetop Popcorn",
+   "aliases": [
+    "popcorn"
+   ],
+   "kind": "snack",
+   "time": "10 minutes",
+   "serves": "1 big bowl",
+   "grownUp": true,
+   "ingredients": [
+    "2 tablespoons oil",
+    "1/2 cup popcorn kernels",
+    "1/2 teaspoon salt",
+    "Optional: melted butter"
+   ],
+   "steps": [
+    "Put the oil and 3 kernels in a big pot with a lid, on medium-high heat.",
+    "When the 3 kernels pop, add the rest and put the lid on.",
+    "Shake the pot every few seconds.",
+    "When the popping slows to 2 seconds apart, about 3 minutes, take it off the heat.",
+    "Pour into a bowl and add salt and butter."
+   ]
+  },
+  {
+   "id": "ants_on_a_log",
+   "name": "Ants on a Log",
+   "aliases": [
+    "celery snack"
+   ],
+   "kind": "snack",
+   "time": "5 minutes",
+   "serves": "2 people",
+   "grownUp": false,
+   "ingredients": [
+    "3 celery sticks",
+    "3 tablespoons peanut butter",
+    "2 tablespoons raisins"
+   ],
+   "steps": [
+    "Wash the celery and cut each stick in half.",
+    "Spread peanut butter in the groove.",
+    "Line up raisins on top like ants."
+   ]
+  },
+  {
+   "id": "fruit_salad",
+   "name": "Rainbow Fruit Salad",
+   "aliases": [
+    "fruit salad"
+   ],
+   "kind": "snack",
+   "time": "15 minutes",
+   "serves": "4 people",
+   "grownUp": false,
+   "ingredients": [
+    "1 cup strawberries",
+    "1 orange",
+    "1 banana",
+    "1 cup grapes",
+    "1 kiwi",
+    "1 cup blueberries",
+    "1 tablespoon honey",
+    "1 squeeze of lemon juice"
+   ],
+   "steps": [
+    "Wash all the fruit.",
+    "Cut the strawberries, orange, banana and kiwi into bite-size pieces.",
+    "Put everything in a big bowl.",
+    "Mix the honey and lemon juice and pour it over.",
+    "Stir gently and serve cold."
+   ]
+  },
+  {
+   "id": "chocolate_strawberries",
+   "name": "Chocolate-Dipped Strawberries",
+   "aliases": [
+    "chocolate covered strawberries",
+    "chocolate strawberries"
+   ],
+   "kind": "dessert",
+   "time": "20 minutes",
+   "serves": "12 strawberries",
+   "grownUp": false,
+   "ingredients": [
+    "12 strawberries",
+    "1 cup chocolate chips",
+    "1 teaspoon coconut oil"
+   ],
+   "steps": [
+    "Wash the strawberries and dry them really well.",
+    "Microwave the chocolate and oil in 30-second bursts, stirring each time, until smooth.",
+    "Dip each strawberry and put it on a tray with paper.",
+    "Chill in the fridge for 15 minutes until the chocolate is hard."
+   ]
+  },
+  {
+   "id": "smoothie",
+   "name": "Berry Banana Smoothie",
+   "aliases": [
+    "smoothies",
+    "fruit smoothie",
+    "strawberry smoothie"
+   ],
+   "kind": "drink",
+   "time": "5 minutes",
+   "serves": "2 glasses",
+   "grownUp": false,
+   "ingredients": [
+    "1 banana",
+    "1 cup frozen berries",
+    "1 cup milk",
+    "1/2 cup yogurt",
+    "1 tablespoon honey"
+   ],
+   "steps": [
+    "Put everything in a blender.",
+    "Put the lid on tight.",
+    "Blend for 1 minute until smooth.",
+    "Pour into glasses and drink right away."
+   ]
+  },
+  {
+   "id": "milkshake",
+   "name": "Strawberry Milkshake",
+   "aliases": [
+    "milkshake",
+    "milk shake",
+    "shake"
+   ],
+   "kind": "drink",
+   "time": "5 minutes",
+   "serves": "2 glasses",
+   "grownUp": false,
+   "ingredients": [
+    "3 scoops vanilla ice cream",
+    "1 cup strawberries",
+    "1/2 cup milk",
+    "Whipped cream"
+   ],
+   "steps": [
+    "Put the ice cream, strawberries and milk in a blender.",
+    "Blend for 30 seconds until smooth.",
+    "Pour into glasses and top with whipped cream."
+   ]
+  },
+  {
+   "id": "lemonade",
+   "name": "Homemade Lemonade",
+   "aliases": [
+    "lemonade"
+   ],
+   "kind": "drink",
+   "time": "10 minutes",
+   "serves": "6 glasses",
+   "grownUp": false,
+   "ingredients": [
+    "1 cup lemon juice (about 6 lemons)",
+    "3/4 cup sugar",
+    "4 cups cold water",
+    "Ice"
+   ],
+   "steps": [
+    "Squeeze the lemons until you have 1 cup of juice.",
+    "Stir the sugar into 1 cup of the water until it dissolves.",
+    "Pour it into a pitcher with the lemon juice and the rest of the water.",
+    "Taste it and add more sugar or water if you want.",
+    "Serve over ice."
+   ]
+  },
+  {
+   "id": "hot_chocolate",
+   "name": "Hot Chocolate",
+   "aliases": [
+    "hot cocoa",
+    "cocoa"
+   ],
+   "kind": "drink",
+   "time": "10 minutes",
+   "serves": "2 mugs",
+   "grownUp": true,
+   "ingredients": [
+    "2 cups milk",
+    "2 tablespoons cocoa powder",
+    "2 tablespoons sugar",
+    "1/4 teaspoon vanilla",
+    "Marshmallows"
+   ],
+   "steps": [
+    "Whisk the cocoa and sugar with a splash of the milk in a pot until smooth.",
+    "Add the rest of the milk.",
+    "Heat on medium for 5 minutes, stirring, until hot but not boiling.",
+    "Stir in the vanilla.",
+    "Pour into mugs and add marshmallows."
+   ]
+  },
+  {
+   "id": "chicken_noodle_soup",
+   "name": "Chicken Noodle Soup",
+   "aliases": [
+    "chicken soup",
+    "soup",
+    "noodle soup"
+   ],
+   "kind": "dinner",
+   "time": "35 minutes",
+   "serves": "4 people",
+   "grownUp": true,
+   "ingredients": [
+    "1 tablespoon oil",
+    "1 onion, chopped",
+    "2 carrots, sliced",
+    "2 celery sticks, sliced",
+    "6 cups chicken broth",
+    "2 cups cooked chicken, shredded",
+    "1 1/2 cups egg noodles",
+    "1/2 teaspoon salt"
+   ],
+   "steps": [
+    "Heat the oil in a big pot on medium.",
+    "Cook the onion, carrots and celery for 5 minutes.",
+    "Add the broth and bring it to a boil.",
+    "Add the noodles and cook for 8 minutes.",
+    "Stir in the chicken and salt and heat for 2 minutes."
+   ]
+  },
+  {
+   "id": "mashed_potatoes",
+   "name": "Mashed Potatoes",
+   "aliases": [
+    "mash",
+    "mashed potato"
+   ],
+   "kind": "side",
+   "time": "30 minutes",
+   "serves": "4 people",
+   "grownUp": true,
+   "ingredients": [
+    "2 pounds (900 g) potatoes",
+    "1/2 cup milk",
+    "3 tablespoons butter",
+    "1 teaspoon salt"
+   ],
+   "steps": [
+    "Peel the potatoes and cut them into chunks.",
+    "Cover them with cold salted water in a pot and bring it to a boil.",
+    "Boil for 15 minutes, until a fork slides in easily.",
+    "Drain them and put them back in the pot.",
+    "Mash with the butter, milk and salt until smooth."
+   ]
+  },
+  {
+   "id": "baked_potato",
+   "name": "Baked Potato",
+   "aliases": [
+    "jacket potato",
+    "baked potatoes"
+   ],
+   "kind": "side",
+   "time": "1 hour",
+   "serves": "2 potatoes",
+   "grownUp": true,
+   "ingredients": [
+    "2 big potatoes",
+    "1 teaspoon oil",
+    "1 pinch of salt",
+    "Butter, cheese and sour cream"
+   ],
+   "steps": [
+    "Heat the oven to 425 F (220 C).",
+    "Scrub the potatoes and poke them a few times with a fork.",
+    "Rub them with oil and salt.",
+    "Bake right on the oven rack for 50 minutes, until soft inside.",
+    "Cut them open and add butter, cheese and sour cream."
+   ]
+  },
+  {
+   "id": "caesar_salad",
+   "name": "Easy Caesar Salad",
+   "aliases": [
+    "salad",
+    "caesar"
+   ],
+   "kind": "side",
+   "time": "10 minutes",
+   "serves": "2 people",
+   "grownUp": false,
+   "ingredients": [
+    "1 head romaine lettuce",
+    "1/2 cup croutons",
+    "1/4 cup grated Parmesan",
+    "3 tablespoons Caesar dressing"
+   ],
+   "steps": [
+    "Wash and dry the lettuce, then tear it into pieces.",
+    "Put it in a big bowl with the dressing and toss.",
+    "Add the croutons and Parmesan and toss again."
+   ]
+  },
+  {
+   "id": "pb_and_j",
+   "name": "Peanut Butter and Jelly Sandwich",
+   "aliases": [
+    "pb&j",
+    "pbj",
+    "peanut butter sandwich",
+    "pb and j",
+    "sandwich"
+   ],
+   "kind": "lunch",
+   "time": "3 minutes",
+   "serves": "1 sandwich",
+   "grownUp": false,
+   "ingredients": [
+    "2 slices of bread",
+    "2 tablespoons peanut butter",
+    "1 tablespoon jelly or jam"
+   ],
+   "steps": [
+    "Spread peanut butter on one slice of bread.",
+    "Spread jelly on the other slice.",
+    "Press them together and cut it in half."
+   ]
+  }
+ ]
+}

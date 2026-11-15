@@ -1,0 +1,43 @@
+<UserControl x:Class="Nimbus.Pages.GamesPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+    <StackPanel x:Name="Root" Margin="0,4,8,0">
+
+      <!-- Now playing (sample) -->
+      <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Right" Style="{StaticResource MonoText}" Foreground="{StaticResource MutedBrush}" TextAlignment="Right"
+                     Text="Today: NMS 39 min&#x0a;This week: NMS 39 min"/>
+          <StackPanel>
+            <TextBlock Text="NOW PLAYING" Style="{StaticResource LabelText}"/>
+            <TextBlock x:Name="GameTitle" Text="No game running" FontFamily="{StaticResource DisplayFont}" FontSize="20" FontWeight="SemiBold" Margin="0,3,0,2"/>
+            <TextBlock Text="Free memory now trims background apps and skips Nimbus. Add your game list to skip games too." Style="{StaticResource BodyText}"/>
+          </StackPanel>
+        </DockPanel>
+      </Border>
+
+      <!-- Game boost (RAM line is real) -->
+      <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+        <StackPanel>
+          <DockPanel>
+            <Button x:Name="FreeButton" DockPanel.Dock="Right" Content="Free memory now" Style="{StaticResource HotPillButton}" Margin="0" Click="Free_Click"/>
+            <TextBlock Text="GAME BOOST" Style="{StaticResource LabelText}"/>
+          </DockPanel>
+          <TextBlock Margin="0,6,0,4" FontWeight="ExtraBold" FontSize="14">
+            <Run Text="RAM: "/><Run x:Name="FreeRun" Text="18.1"/><Run Text=" GB free of "/><Run Text="{Binding MemTotalGb, Mode=OneWay, StringFormat={}{0:0.0}}"/><Run Text=" GB"/>
+          </TextBlock>
+          <TextBlock Style="{StaticResource BodyText}" Text="Also busy: svchost 1.8 GB of RAM"/>
+          <TextBlock Style="{StaticResource BodyText}" Text="Card memory: 5.2 GB of 5.8 GB in use · Desktop Window Manager 2.2 GB, model_host 1.4 GB"/>
+          <TextBlock Style="{StaticResource BodyText}" Text="Main screen: 75 Hz over DisplayPort, the most it does."/>
+        </StackPanel>
+      </Border>
+
+      <DockPanel Margin="0,4,0,8">
+        <Button DockPanel.Dock="Right" Content="Refresh" Style="{StaticResource SmallPillButton}" Margin="0" Click="Refresh_Click"/>
+        <TextBlock Text="LIBRARY" Style="{StaticResource LabelText}"/>
+      </DockPanel>
+      <WrapPanel x:Name="Library"/>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

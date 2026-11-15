@@ -1,0 +1,105 @@
+<UserControl x:Class="Nimbus.Pages.ClipsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <DockPanel x:Name="Root" Margin="0,4,0,0">
+    <!-- header -->
+    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,12">
+      <Border DockPanel.Dock="Right" Style="{StaticResource Chip}">
+        <StackPanel Orientation="Horizontal">
+          <Ellipse x:Name="LiveDot" Width="8" Height="8" Fill="{StaticResource BadBrush}" Margin="0,0,7,0" VerticalAlignment="Center"/>
+          <TextBlock x:Name="BufText" Text="Buffering 25s · 720p · 60fps" Style="{StaticResource MonoText}"/>
+        </StackPanel>
+      </Border>
+      <TextBlock Text="Clips" Style="{StaticResource PageTitle}"/>
+    </DockPanel>
+
+    <!-- big buttons -->
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,12">
+      <Button Content="Save last 25s" x:Name="SaveButton" Style="{StaticResource HotBigButton}" Click="Save_Click"/>
+      <Button Content="Shot" Style="{StaticResource BigButton}" Click="Shot_Click"/>
+      <Button Content="Folder" Style="{StaticResource BigButton}" Click="Folder_Click"/>
+    </StackPanel>
+
+    <!-- capture settings (springs open) -->
+    <Border DockPanel.Dock="Bottom" Style="{StaticResource Card}" Margin="0,10,0,0" Padding="6,4">
+      <StackPanel>
+        <Button Style="{StaticResource FlatRowButton}" Click="CaptureToggle_Click">
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="▸" FontSize="13" Margin="0,0,8,0" RenderTransformOrigin="0.5,0.5">
+              <TextBlock.RenderTransform>
+                <RotateTransform x:Name="CaretTurn" Angle="0"/>
+              </TextBlock.RenderTransform>
+            </TextBlock>
+            <TextBlock Text="Capture settings" FontWeight="ExtraBold"/>
+          </StackPanel>
+        </Button>
+        <StackPanel x:Name="CaptureBody" Visibility="Collapsed" Margin="14,0,14,10" RenderTransformOrigin="0.5,0">
+          <StackPanel.RenderTransform>
+            <ScaleTransform x:Name="CaptureScale" ScaleY="1"/>
+          </StackPanel.RenderTransform>
+          <DockPanel Margin="0,0,0,4">
+            <TextBlock Text="BUFFER" Width="70" Style="{StaticResource LabelText}"/>
+            <WrapPanel>
+              <RadioButton Content="15s" Tag="15s" GroupName="ClipBuf" Style="{StaticResource FilterChip}" Checked="Setting_Checked"/>
+              <RadioButton Content="25s" Tag="25s" GroupName="ClipBuf" IsChecked="True" Style="{StaticResource FilterChip}" Checked="Setting_Checked"/>
+              <RadioButton Content="60s" Tag="60s" GroupName="ClipBuf" Style="{StaticResource FilterChip}" Checked="Setting_Checked"/>
+            </WrapPanel>
+          </DockPanel>
+          <DockPanel Margin="0,0,0,4">
+            <TextBlock Text="QUALITY" Width="70" Style="{StaticResource LabelText}"/>
+            <WrapPanel>
+              <RadioButton Content="720p" Tag="720p" GroupName="ClipQ" IsChecked="True" Style="{StaticResource FilterChip}" Checked="Setting_Checked"/>
+              <RadioButton Content="1080p" Tag="1080p" GroupName="ClipQ" Style="{StaticResource FilterChip}" Checked="Setting_Checked"/>
+            </WrapPanel>
+          </DockPanel>
+          <DockPanel>
+            <TextBlock Text="FPS" Width="70" Style="{StaticResource LabelText}"/>
+            <WrapPanel>
+              <RadioButton Content="30" Tag="30fps" GroupName="ClipFps" Style="{StaticResource FilterChip}" Checked="Setting_Checked"/>
+              <RadioButton Content="60" Tag="60fps" GroupName="ClipFps" IsChecked="True" Style="{StaticResource FilterChip}" Checked="Setting_Checked"/>
+            </WrapPanel>
+          </DockPanel>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <!-- library -->
+    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+      <Button DockPanel.Dock="Right" Content="★ Favourites" Style="{StaticResource SmallPillButton}" Margin="0"/>
+      <TextBlock Text="LIBRARY" Style="{StaticResource LabelText}"/>
+    </DockPanel>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+      <ItemsControl x:Name="ClipGrid" Focusable="False">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel/>
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Button Style="{StaticResource BareButton}" Margin="0,0,10,10" Width="196">
+              <StackPanel>
+                <Grid Height="110">
+                  <Border CornerRadius="14">
+                    <Border.Background>
+                      <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#2A2550" Offset="0"/>
+                        <GradientStop Color="#16324A" Offset="1"/>
+                      </LinearGradientBrush>
+                    </Border.Background>
+                  </Border>
+                  <Path Data="M0,0 L14,8 L0,16 Z" Fill="#D9FFFFFF" Width="16" Height="18" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                  <Border Style="{StaticResource Flag}" Background="#99000000" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="8">
+                    <TextBlock Text="Clip" Style="{StaticResource FlagText}" Foreground="White"/>
+                  </Border>
+                </Grid>
+                <TextBlock Text="{Binding Name}" Margin="2,6,2,0" FontSize="12" FontWeight="ExtraBold" TextTrimming="CharacterEllipsis"/>
+                <TextBlock Text="{Binding Meta}" Margin="2,1,2,0" Style="{StaticResource SubText}" FontSize="11"/>
+              </StackPanel>
+            </Button>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+  </DockPanel>
+</UserControl>

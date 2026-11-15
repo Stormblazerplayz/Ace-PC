@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Nimbus's updater: a tiny program that swaps in a new version while Nimbus is closed,
+       keeps a backup, and rolls back if the new version doesn't start. Nimbus starts it; you never need to. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>Nimbus.Updater</RootNamespace>
+    <AssemblyName>NimbusUpdater</AssemblyName>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+  </PropertyGroup>
+
+</Project>

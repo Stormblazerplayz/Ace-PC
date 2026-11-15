@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Nimbus V3 Polish: a working WPF demo of the "V3 Polish" design.
+       Open this folder in Visual Studio 2022, or run "dotnet run" in it, on Windows. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>Nimbus</RootNamespace>
+    <AssemblyName>NimbusV3Polish</AssemblyName>
+    <!-- LibreHardwareMonitorLib only ships Windows x64/x86/arm64 builds, so pick one. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <!-- Ace's version. The GitHub release workflow sets it from the tag (v4.0.1 → 4.0.1), and the
+         auto-updater compares it with the newest release. -->
+    <Version>4.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The updater is its own little program (in the Updater folder). It's built along with Nimbus and
+         ends up next to it as NimbusUpdater.exe. -->
+    <Compile Remove="Updater\**" />
+    <None Remove="Updater\**" />
+    <Page Remove="Updater\**" />
+    <ProjectReference Include="Updater\NimbusUpdater.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Real CPU/GPU temps and fan speeds -->
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.6" />
+    <!-- Ace voice chat: mic in and speakers out (WaveInEvent / WaveOutEvent) -->
+    <PackageReference Include="NAudio.WinMM" Version="2.2.1" />
+    <PackageReference Include="System.Speech" Version="8.0.0" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="8.0.1" />
+    <!-- Ace V4: runs the small MiniLM "meaning" network on the CPU -->
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.20.1" />
+    <!-- Ace V4: reads Windows' notification list when the notification API isn't allowed -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Ace V4's question-and-answer bank, copied next to the app -->
+    <None Include="Data\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

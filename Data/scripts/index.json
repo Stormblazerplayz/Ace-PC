@@ -1,0 +1,1083 @@
+[
+  {
+    "id": "kill-brick",
+    "name": "Kill brick",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/kill-brick.lua",
+    "summary": "Kills any player or NPC that touches the part, and makes it glow red.",
+    "where": "In Roblox Studio, insert a Script inside the Part you want to be deadly. Nothing else to set up.",
+    "aliases": [
+      "kill part",
+      "lava brick",
+      "deadly part",
+      "death brick",
+      "kill block",
+      "lava part"
+    ]
+  },
+  {
+    "id": "kill-bricks-folder",
+    "name": "Kill bricks folder (one script for all)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/kill-bricks-folder.lua",
+    "summary": "One script that makes every part inside a KillBricks folder deadly, including parts added later.",
+    "where": "Put a Script in ServerScriptService. First create a Folder in Workspace named KillBricks and put your deadly parts in it.",
+    "aliases": [
+      "kill bricks folder",
+      "all kill bricks",
+      "many lava parts",
+      "lava folder",
+      "one script kill bricks"
+    ]
+  },
+  {
+    "id": "moving-part",
+    "name": "Moving part (back and forth)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/moving-part.lua",
+    "summary": "Slides a part back and forth forever with TweenService, and carries players standing on it.",
+    "where": "Insert a Script inside the Part where the platform should start. Change MOVE_BY to set how far and which way it moves.",
+    "aliases": [
+      "moving platform",
+      "back and forth part",
+      "sliding part",
+      "elevator",
+      "moving block",
+      "tween part"
+    ]
+  },
+  {
+    "id": "spinning-part",
+    "name": "Spinning part",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/spinning-part.lua",
+    "summary": "Spins a part around forever on the axis you choose, and carries players standing on it.",
+    "where": "Insert a Script inside the Part you want to spin. Pick SPIN_AXIS and DEGREES_PER_SECOND at the top.",
+    "aliases": [
+      "spinner",
+      "rotating part",
+      "spinning obstacle",
+      "spinning kill bar",
+      "rotate part",
+      "spin brick"
+    ]
+  },
+  {
+    "id": "fading-platform",
+    "name": "Disappearing platform",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/fading-platform.lua",
+    "summary": "Fades out when stepped on, lets the player fall through, then comes back after a few seconds.",
+    "where": "Insert a Script inside the Part (the platform). Nothing else to set up.",
+    "aliases": [
+      "disappearing platform",
+      "fading platform",
+      "vanishing part",
+      "falling platform",
+      "disappearing block",
+      "fade part"
+    ]
+  },
+  {
+    "id": "teleporter-pads",
+    "name": "Two-way teleporter pads",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/teleporter-pads.lua",
+    "summary": "Step on PadA to teleport to PadB and back, with a cooldown so you don't bounce back and forth.",
+    "where": "Make a Model or Folder in Workspace with two Parts named PadA and PadB, and insert this Script into that same Model/Folder.",
+    "aliases": [
+      "teleporter",
+      "teleport pad",
+      "portal",
+      "teleport part",
+      "two way teleporter",
+      "tp pad"
+    ]
+  },
+  {
+    "id": "checkpoints",
+    "name": "Obby checkpoints",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/checkpoints.lua",
+    "summary": "Saves your stage when you touch a numbered checkpoint and respawns you there, with a Stage leaderboard.",
+    "where": "Put this Script in ServerScriptService. Create a Folder in Workspace named Checkpoints holding anchored Parts named 1, 2, 3 and so on (1 = start), and keep one normal SpawnLocation at the start.",
+    "aliases": [
+      "checkpoint",
+      "obby checkpoints",
+      "stages",
+      "save stage",
+      "respawn at checkpoint",
+      "stage leaderboard"
+    ]
+  },
+  {
+    "id": "jump-pad",
+    "name": "Jump pad",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Movement",
+    "file": "lua/jump-pad.lua",
+    "summary": "Launches players high into the air when they step on it, using a short LinearVelocity push.",
+    "where": "Insert a Script inside a flat anchored Part on the ground. Change JUMP_SPEED to jump higher.",
+    "aliases": [
+      "jump pad",
+      "bounce pad",
+      "trampoline",
+      "launch up",
+      "super jump pad",
+      "boost jump"
+    ]
+  },
+  {
+    "id": "launch-pad",
+    "name": "Launch pad (forward cannon)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Movement",
+    "file": "lua/launch-pad.lua",
+    "summary": "Shoots players forward and up in the direction the pad's front face points.",
+    "where": "Insert a Script inside an anchored Part and rotate the part so its Front face points where players should fly.",
+    "aliases": [
+      "launch pad",
+      "cannon",
+      "fling pad",
+      "boost forward",
+      "catapult",
+      "launcher"
+    ]
+  },
+  {
+    "id": "speed-pad",
+    "name": "Speed pad",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Movement",
+    "file": "lua/speed-pad.lua",
+    "summary": "Gives players a burst of speed for a few seconds, then puts their speed back to normal.",
+    "where": "Insert a Script inside a flat anchored Part on the ground. Change BOOST_SPEED and BOOST_TIME at the top.",
+    "aliases": [
+      "speed pad",
+      "speed boost",
+      "run faster pad",
+      "boost pad",
+      "speed part"
+    ]
+  },
+  {
+    "id": "door",
+    "name": "Opening door (press E, click or touch)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Building",
+    "file": "lua/door.lua",
+    "summary": "A door that slides open with a ProximityPrompt, ClickDetector or touch, then closes by itself.",
+    "where": "Insert a Script inside your anchored door Part and set OPEN_MODE to \"Prompt\", \"Click\" or \"Touch\".",
+    "aliases": [
+      "opening door",
+      "proximity prompt door",
+      "click door",
+      "sliding door",
+      "press e door"
+    ]
+  },
+  {
+    "id": "coins",
+    "name": "Collectable coins + leaderstats",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Economy",
+    "file": "lua/coins.lua",
+    "summary": "Adds a Coins leaderstat and gives coins when players touch coin parts, which respawn after a while.",
+    "where": "Put this Script in ServerScriptService. Create a Folder in Workspace named Coins and put your coin Parts inside it.",
+    "aliases": [
+      "collect coins",
+      "leaderstats",
+      "money",
+      "currency",
+      "coin pickup",
+      "cash"
+    ]
+  },
+  {
+    "id": "spinning-coin",
+    "name": "Spinning + bobbing coins",
+    "lang": "lua",
+    "kind": "LocalScript",
+    "category": "Effects",
+    "file": "lua/spinning-coin.lua",
+    "summary": "Smoothly spins and floats every coin in the Coins folder on each player's screen.",
+    "where": "Put this LocalScript in StarterPlayer > StarterPlayerScripts. It animates the parts in the Workspace folder named Coins.",
+    "aliases": [
+      "spinning coin",
+      "coin animation",
+      "bobbing coin",
+      "floating coin",
+      "rotate coins"
+    ]
+  },
+  {
+    "id": "datastore-save",
+    "name": "Save leaderstats (DataStore)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Data",
+    "file": "lua/datastore-save.lua",
+    "summary": "Saves and loads all leaderstats numbers with pcall, retries, autosave and BindToClose.",
+    "where": "Put this Script in ServerScriptService. Publish the game and turn on Game Settings > Security > Enable Studio Access to API Services first.",
+    "aliases": [
+      "save data",
+      "datastore",
+      "save leaderstats",
+      "save coins",
+      "data saving",
+      "save progress",
+      "save stats"
+    ]
+  },
+  {
+    "id": "day-night-cycle",
+    "name": "Day/night cycle",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Environment",
+    "file": "lua/day-night-cycle.lua",
+    "summary": "Moves the sun and moon over time and switches lamps in a NightLights folder on at night.",
+    "where": "Put this Script in ServerScriptService. Optional: a Workspace folder named NightLights with lamp Parts that contain PointLights.",
+    "aliases": [
+      "day night cycle",
+      "time of day",
+      "sun moving",
+      "night time",
+      "day and night",
+      "clock time"
+    ]
+  },
+  {
+    "id": "rising-lava",
+    "name": "Rising lava (resets)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/rising-lava.lua",
+    "summary": "Lava that slowly rises, kills anyone inside it, then drops back down and rises again.",
+    "where": "Insert a Script inside a big flat Part at the bottom of your map. Set RISE_HEIGHT and RISE_TIME at the top.",
+    "aliases": [
+      "rising lava",
+      "lava rising",
+      "flood",
+      "rising water",
+      "lava escape",
+      "the floor is lava"
+    ]
+  },
+  {
+    "id": "conveyor-belt",
+    "name": "Conveyor belt",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Movement",
+    "file": "lua/conveyor-belt.lua",
+    "summary": "Pushes anything standing on the part along, like an airport walkway.",
+    "where": "Insert a Script inside a long flat Part. Things move toward the part's Front face; make SPEED negative to reverse.",
+    "aliases": [
+      "conveyor",
+      "conveyor belt",
+      "moving floor",
+      "treadmill",
+      "push belt"
+    ]
+  },
+  {
+    "id": "heal-pad",
+    "name": "Heal pad",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Combat",
+    "file": "lua/heal-pad.lua",
+    "summary": "Gives health back to players who step on it, with a cooldown and a green flash.",
+    "where": "Insert a Script inside a flat anchored Part. Change HEAL_AMOUNT and COOLDOWN at the top.",
+    "aliases": [
+      "heal pad",
+      "healing part",
+      "health pad",
+      "heal brick",
+      "regen pad",
+      "med pad"
+    ]
+  },
+  {
+    "id": "damage-zone",
+    "name": "Damage zone (over time)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Combat",
+    "file": "lua/damage-zone.lua",
+    "summary": "Hurts anyone standing inside the part a little every second, like poison gas.",
+    "where": "Insert a Script inside a Part that covers the dangerous area; the script makes it see-through and walk-through.",
+    "aliases": [
+      "damage zone",
+      "poison gas",
+      "damage over time",
+      "hurt zone",
+      "toxic area",
+      "radiation zone"
+    ]
+  },
+  {
+    "id": "sword-tool",
+    "name": "Sword tool",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Combat",
+    "file": "lua/sword-tool.lua",
+    "summary": "A simple sword: click to swing, damages others with a cooldown and tags them for kill credit.",
+    "where": "Insert a Tool in StarterPack with a Part named Handle (Anchored and CanCollide off), then insert this Script inside the Tool.",
+    "aliases": [
+      "sword",
+      "weapon",
+      "tool",
+      "melee weapon",
+      "sword script",
+      "slash"
+    ]
+  },
+  {
+    "id": "follower-npc",
+    "name": "Follower NPC (chases nearest player)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "NPC",
+    "file": "lua/follower-npc.lua",
+    "summary": "Makes an NPC walk toward the nearest player with Humanoid:MoveTo, and can bite like a zombie.",
+    "where": "Insert a Script inside an unanchored NPC Model (from Avatar > Rig Builder) that has a Humanoid and HumanoidRootPart.",
+    "aliases": [
+      "follower npc",
+      "npc follow",
+      "zombie",
+      "chasing npc",
+      "enemy ai",
+      "pet follow",
+      "npc chase"
+    ]
+  },
+  {
+    "id": "shop-server",
+    "name": "Shop (server)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Economy",
+    "file": "lua/shop-server.lua",
+    "summary": "The server side of a shop: checks prices, takes coins and gives tools safely via a RemoteEvent.",
+    "where": "Put this Script in ServerScriptService. Create a Folder named ShopItems in ServerStorage with your Tools, and list their names and prices in PRICES. Use with shop-button.",
+    "aliases": [
+      "shop",
+      "shop server",
+      "buy items",
+      "store",
+      "item shop",
+      "remote event shop"
+    ]
+  },
+  {
+    "id": "shop-button",
+    "name": "Shop button (client)",
+    "lang": "lua",
+    "kind": "LocalScript",
+    "category": "GUI",
+    "file": "lua/shop-button.lua",
+    "summary": "A shop GUI button that asks the server to buy an item and shows whether it worked.",
+    "where": "Insert a LocalScript inside a TextButton in a ScreenGui in StarterGui, and name the button the same as the tool it sells. Needs the shop-server script.",
+    "aliases": [
+      "shop button",
+      "buy button",
+      "shop gui",
+      "gui button",
+      "store button"
+    ]
+  },
+  {
+    "id": "round-timer",
+    "name": "Round system (intermission + timer)",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Game Loop",
+    "file": "lua/round-timer.lua",
+    "summary": "Runs intermission and round countdowns, teleports players to an arena, and gives survivors a Win.",
+    "where": "Put this Script in ServerScriptService. Create two anchored Parts in Workspace named LobbySpawn and ArenaSpawn. It makes a StringValue named Status in ReplicatedStorage.",
+    "aliases": [
+      "round system",
+      "round timer",
+      "intermission",
+      "minigame rounds",
+      "game loop",
+      "countdown"
+    ]
+  },
+  {
+    "id": "status-label",
+    "name": "Status label (shows round timer)",
+    "lang": "lua",
+    "kind": "LocalScript",
+    "category": "GUI",
+    "file": "lua/status-label.lua",
+    "summary": "Shows the Status text from ReplicatedStorage on the screen, updating live.",
+    "where": "Insert a LocalScript inside a TextLabel in a ScreenGui in StarterGui. Needs the round-timer script (or any StringValue named Status in ReplicatedStorage).",
+    "aliases": [
+      "status label",
+      "timer gui",
+      "round timer text",
+      "show status",
+      "countdown gui"
+    ]
+  },
+  {
+    "id": "team-door",
+    "name": "Team-only door",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Building",
+    "file": "lua/team-door.lua",
+    "summary": "A door only one team can walk through, using collision groups so others can't sneak in.",
+    "where": "Insert a Script inside your anchored door Part and set TEAM_NAME to the exact name of a Team you made under Teams.",
+    "aliases": [
+      "team door",
+      "vip door",
+      "team only door",
+      "staff door",
+      "owner door",
+      "restricted door"
+    ]
+  },
+  {
+    "id": "kills-leaderboard",
+    "name": "Kills + deaths leaderboard",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Combat",
+    "file": "lua/kills-leaderboard.lua",
+    "summary": "Adds Kills and Deaths to the player list and gives a kill to whoever tagged the victim last.",
+    "where": "Put this Script in ServerScriptService. Use weapons that add a creator tag (the sword-tool script does).",
+    "aliases": [
+      "kills leaderboard",
+      "kill counter",
+      "kills and deaths",
+      "kdr",
+      "pvp leaderboard"
+    ]
+  },
+  {
+    "id": "win-pad",
+    "name": "Win pad",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/win-pad.lua",
+    "summary": "Gives +1 Win when touched and sends the player back to the start.",
+    "where": "Insert a Script inside an anchored Part at the end of your obby. Works with the checkpoints script.",
+    "aliases": [
+      "win pad",
+      "finish line",
+      "end of obby",
+      "win part",
+      "wins leaderboard"
+    ]
+  },
+  {
+    "id": "double-jump",
+    "name": "Double jump",
+    "lang": "lua",
+    "kind": "LocalScript",
+    "category": "Movement",
+    "file": "lua/double-jump.lua",
+    "summary": "Lets players jump again while in the air (works with keyboard, phone and controller).",
+    "where": "Put this LocalScript in StarterPlayer > StarterCharacterScripts.",
+    "aliases": [
+      "double jump",
+      "jump twice",
+      "air jump",
+      "triple jump",
+      "multi jump"
+    ]
+  },
+  {
+    "id": "sprint",
+    "name": "Sprint with Shift",
+    "lang": "lua",
+    "kind": "LocalScript",
+    "category": "Movement",
+    "file": "lua/sprint.lua",
+    "summary": "Hold Left Shift (or tap the on-screen button on mobile) to run faster with a camera zoom effect.",
+    "where": "Put this LocalScript in StarterPlayer > StarterCharacterScripts.",
+    "aliases": [
+      "run",
+      "shift to sprint",
+      "run faster",
+      "sprint button"
+    ]
+  },
+  {
+    "id": "give-tool-pad",
+    "name": "Give tool pad",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Combat",
+    "file": "lua/give-tool-pad.lua",
+    "summary": "Gives a tool from ServerStorage to players who step on the pad, one copy each.",
+    "where": "Put your Tool in ServerStorage, then insert this Script inside an anchored Part and set TOOL_NAME to the tool's name.",
+    "aliases": [
+      "give tool",
+      "tool giver",
+      "item giver",
+      "weapon giver",
+      "free sword pad"
+    ]
+  },
+  {
+    "id": "music-player",
+    "name": "Background music playlist",
+    "lang": "lua",
+    "kind": "LocalScript",
+    "category": "Audio",
+    "file": "lua/music-player.lua",
+    "summary": "Plays all songs in a Music folder one after another (shuffled), with M to mute.",
+    "where": "Put this LocalScript in StarterPlayer > StarterPlayerScripts. Create a Folder named Music in SoundService with Sound objects that have SoundIds set.",
+    "aliases": [
+      "music",
+      "background music",
+      "playlist",
+      "music player",
+      "song player",
+      "mute music"
+    ]
+  },
+  {
+    "id": "sound-on-touch",
+    "name": "Sound on touch",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Audio",
+    "file": "lua/sound-on-touch.lua",
+    "summary": "Plays a sound when a player touches the part, with a cooldown.",
+    "where": "Insert a Script inside the Part, and either put a Sound inside the Part or type its ID into SOUND_ID.",
+    "aliases": [
+      "sound on touch",
+      "touch sound",
+      "play sound",
+      "noise part",
+      "squeaky part"
+    ]
+  },
+  {
+    "id": "timed-bomb",
+    "name": "Timed bomb",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Combat",
+    "file": "lua/timed-bomb.lua",
+    "summary": "Blinks for a countdown after being touched, then explodes, hurts nearby players and comes back later.",
+    "where": "Insert a Script inside a Part (a black Ball works great). Nothing else to set up.",
+    "aliases": [
+      "bomb",
+      "timed bomb",
+      "explosion",
+      "tnt",
+      "landmine",
+      "explode"
+    ]
+  },
+  {
+    "id": "rainbow-part",
+    "name": "Rainbow part",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Effects",
+    "file": "lua/rainbow-part.lua",
+    "summary": "Smoothly cycles a part through every color of the rainbow.",
+    "where": "Insert a Script inside the Part (Neon material looks best).",
+    "aliases": [
+      "rainbow part",
+      "color changing part",
+      "rgb part",
+      "rainbow brick",
+      "disco part"
+    ]
+  },
+  {
+    "id": "button-bridge",
+    "name": "Button bridge",
+    "lang": "lua",
+    "kind": "Script",
+    "category": "Obby",
+    "file": "lua/button-bridge.lua",
+    "summary": "Step on a button to make a hidden bridge appear for a few seconds.",
+    "where": "Make a Model in Workspace with a Part named Button and a Folder named Bridge (holding the bridge Parts), and insert this Script into that Model.",
+    "aliases": [
+      "button bridge",
+      "hidden bridge",
+      "bridge button",
+      "appearing bridge",
+      "timed bridge"
+    ]
+  },
+  {
+    "id": "helpers-module",
+    "name": "Helpers module",
+    "lang": "lua",
+    "kind": "ModuleScript",
+    "category": "Utility",
+    "file": "lua/helpers-module.lua",
+    "summary": "Reusable helper functions (player from hit, leaderstats, touch with cooldown, time format) for your other scripts.",
+    "where": "Insert a ModuleScript in ReplicatedStorage named Helpers and paste this in; other scripts use require on it (examples at the top).",
+    "aliases": [
+      "module script",
+      "helpers",
+      "utility functions",
+      "module",
+      "reusable code"
+    ]
+  },
+  {
+    "id": "blink-led",
+    "name": "Blink an LED",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Arduino Basics",
+    "file": "cpp/blink-led.cpp",
+    "summary": "Turns an LED on and off every half second (the Arduino Hello World).",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Uses the built-in LED on pin 13, or an LED + 220 ohm resistor on pin 13.",
+    "aliases": [
+      "blink",
+      "blink led",
+      "arduino hello world",
+      "flash led",
+      "led on off"
+    ]
+  },
+  {
+    "id": "button-led",
+    "name": "Button toggles LED (debounced)",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Arduino Basics",
+    "file": "cpp/button-led.cpp",
+    "summary": "Press a button to switch an LED on or off, with debounce so one press counts once.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Button between pin 2 and GND (uses INPUT_PULLUP), LED + 220 ohm resistor on pin 13.",
+    "aliases": [
+      "button led",
+      "push button",
+      "debounce",
+      "toggle led",
+      "button switch"
+    ]
+  },
+  {
+    "id": "servo-sweep",
+    "name": "Servo sweep",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Motors",
+    "file": "cpp/servo-sweep.cpp",
+    "summary": "Sweeps a servo motor from 0 to 180 degrees and back.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Servo signal wire to pin 9, red to 5V, brown/black to GND. Servo.h comes with the IDE.",
+    "aliases": [
+      "servo",
+      "servo sweep",
+      "servo motor",
+      "sg90",
+      "move servo"
+    ]
+  },
+  {
+    "id": "ultrasonic-distance",
+    "name": "Ultrasonic distance (HC-SR04)",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Sensors",
+    "file": "cpp/ultrasonic-distance.cpp",
+    "summary": "Measures distance with an HC-SR04 and prints centimeters to the Serial Monitor.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Trig to pin 9, Echo to pin 10, VCC to 5V, GND to GND; open the Serial Monitor at 9600 baud.",
+    "aliases": [
+      "ultrasonic",
+      "distance sensor",
+      "hc-sr04",
+      "hcsr04",
+      "measure distance",
+      "sonar"
+    ]
+  },
+  {
+    "id": "dc-motor-l298n",
+    "name": "DC motor with L298N",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Motors",
+    "file": "cpp/dc-motor-l298n.cpp",
+    "summary": "Controls a DC motor's speed and direction with an L298N driver.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. ENA to pin 9 (remove the ENA jumper), IN1 to pin 8, IN2 to pin 7, motor on OUT1/OUT2, separate battery with shared GND.",
+    "aliases": [
+      "dc motor",
+      "l298n",
+      "motor driver",
+      "motor speed",
+      "motor direction",
+      "robot car motor"
+    ]
+  },
+  {
+    "id": "neopixel-rainbow",
+    "name": "LED strip rainbow (NeoPixel)",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Lights",
+    "file": "cpp/neopixel-rainbow.cpp",
+    "summary": "Shows a moving rainbow on a WS2812B/NeoPixel LED strip.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Install Adafruit NeoPixel from Tools > Manage Libraries first. Strip DIN to pin 6 through a 330 ohm resistor, 5V and GND to power.",
+    "aliases": [
+      "led strip",
+      "neopixel",
+      "rainbow lights",
+      "ws2812b",
+      "rgb strip",
+      "addressable leds"
+    ]
+  },
+  {
+    "id": "joystick",
+    "name": "Joystick reader",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Sensors",
+    "file": "cpp/joystick.cpp",
+    "summary": "Reads a thumb joystick's X/Y and click button and prints the direction.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. VRx to A0, VRy to A1, SW to pin 2, +5V to 5V, GND to GND; open the Serial Monitor at 9600 baud.",
+    "aliases": [
+      "thumbstick",
+      "analog joystick",
+      "ky-023",
+      "read joystick"
+    ]
+  },
+  {
+    "id": "buzzer-melody",
+    "name": "Buzzer melody",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Sound",
+    "file": "cpp/buzzer-melody.cpp",
+    "summary": "Plays Twinkle Twinkle Little Star on a passive buzzer with tone(), and again when a button is pressed.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Passive buzzer + to pin 8 and - to GND; optional button between pin 2 and GND.",
+    "aliases": [
+      "buzzer",
+      "melody",
+      "play song",
+      "tone",
+      "piezo",
+      "music arduino"
+    ]
+  },
+  {
+    "id": "pot-dimmer",
+    "name": "Potentiometer LED dimmer",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Lights",
+    "file": "cpp/pot-dimmer.cpp",
+    "summary": "Turn a knob to make an LED brighter or dimmer with analogWrite.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Potentiometer middle leg to A0 (outer legs to 5V and GND), LED + 220 ohm resistor on PWM pin 9.",
+    "aliases": [
+      "potentiometer",
+      "dimmer",
+      "knob led",
+      "fade led",
+      "analog write",
+      "brightness knob"
+    ]
+  },
+  {
+    "id": "dht11-temperature",
+    "name": "Temperature + humidity (DHT11)",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Sensors",
+    "file": "cpp/dht11-temperature.cpp",
+    "summary": "Reads temperature and humidity from a DHT11 every 2 seconds and lights an LED when it's hot.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Install \"DHT sensor library\" by Adafruit (plus Adafruit Unified Sensor) first. DHT11 DATA to pin 2, + to 5V, - to GND.",
+    "aliases": [
+      "temperature",
+      "dht11",
+      "humidity",
+      "temperature sensor",
+      "weather station",
+      "dht22"
+    ]
+  },
+  {
+    "id": "traffic-light",
+    "name": "Traffic light",
+    "lang": "cpp",
+    "kind": "Arduino",
+    "category": "Lights",
+    "file": "cpp/traffic-light.cpp",
+    "summary": "Runs red, green and yellow LEDs like a real traffic light, with an optional walk button.",
+    "where": "Paste into the Arduino IDE, choose your board and port, and press Upload. Red LED on pin 12, yellow on pin 11, green on pin 10 (each with a 220 ohm resistor); optional button between pin 2 and GND.",
+    "aliases": [
+      "traffic light",
+      "stop light",
+      "red yellow green",
+      "traffic lights",
+      "stoplight"
+    ]
+  },
+  {
+    "id": "hello-input",
+    "name": "Hello + input basics",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Basics",
+    "file": "cpp/hello-input.cpp",
+    "summary": "Your first C++ program: prints text, asks questions, and does math with your answers.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 hello-input.cpp -o hello-input and then ./hello-input.",
+    "aliases": [
+      "hello world",
+      "first program",
+      "cin cout",
+      "input basics",
+      "c++ basics",
+      "variables"
+    ]
+  },
+  {
+    "id": "guess-number",
+    "name": "Number guessing game",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Games",
+    "file": "cpp/guess-number.cpp",
+    "summary": "The computer picks a number from 1 to 100 and tells you higher or lower until you guess it.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 guess-number.cpp -o guess-number and then ./guess-number.",
+    "aliases": [
+      "guess the number",
+      "number guessing",
+      "higher lower",
+      "guessing game",
+      "random number game"
+    ]
+  },
+  {
+    "id": "rock-paper-scissors",
+    "name": "Rock paper scissors",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Games",
+    "file": "cpp/rock-paper-scissors.cpp",
+    "summary": "Play rock paper scissors against the computer, first to 3 wins.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 rock-paper-scissors.cpp -o rock-paper-scissors and then ./rock-paper-scissors.",
+    "aliases": [
+      "rock paper scissors",
+      "rps",
+      "roshambo",
+      "hand game"
+    ]
+  },
+  {
+    "id": "tic-tac-toe",
+    "name": "Tic-tac-toe (2 players)",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Games",
+    "file": "cpp/tic-tac-toe.cpp",
+    "summary": "Two players take turns on a 3x3 board; it checks for wins and ties and keeps score.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 tic-tac-toe.cpp -o tic-tac-toe and then ./tic-tac-toe.",
+    "aliases": [
+      "tic tac toe",
+      "noughts and crosses",
+      "x and o",
+      "tictactoe",
+      "board game"
+    ]
+  },
+  {
+    "id": "calculator",
+    "name": "Calculator",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Basics",
+    "file": "cpp/calculator.cpp",
+    "summary": "A calculator that does + - * / % and powers, with divide-by-zero checks and an ans memory.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 calculator.cpp -o calculator and then ./calculator.",
+    "aliases": [
+      "math program",
+      "add subtract",
+      "calc",
+      "simple calculator"
+    ]
+  },
+  {
+    "id": "times-table-quiz",
+    "name": "Times table quiz",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Games",
+    "file": "cpp/times-table-quiz.cpp",
+    "summary": "Asks 10 multiplication questions, then shows your score, best streak and time.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 times-table-quiz.cpp -o times-table-quiz and then ./times-table-quiz.",
+    "aliases": [
+      "times tables",
+      "multiplication quiz",
+      "math quiz",
+      "quiz game",
+      "times table"
+    ]
+  },
+  {
+    "id": "todo-list",
+    "name": "To-do list (std::vector)",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Basics",
+    "file": "cpp/todo-list.cpp",
+    "summary": "A to-do list app using std::vector: add, list, finish and remove tasks.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 todo-list.cpp -o todo-list and then ./todo-list.",
+    "aliases": [
+      "to do list",
+      "todo",
+      "task list",
+      "vector example",
+      "checklist"
+    ]
+  },
+  {
+    "id": "hangman",
+    "name": "Hangman",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Games",
+    "file": "cpp/hangman.cpp",
+    "summary": "Guess the secret word letter by letter before the hangman drawing is finished.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 hangman.cpp -o hangman and then ./hangman.",
+    "aliases": [
+      "word game",
+      "guess the word",
+      "word guessing"
+    ]
+  },
+  {
+    "id": "dice-roller",
+    "name": "Dice roller",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Games",
+    "file": "cpp/dice-roller.cpp",
+    "summary": "Rolls dice like 2d6 or 1d20 with <random>, and can show a chart of 1000 rolls.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 dice-roller.cpp -o dice-roller and then ./dice-roller.",
+    "aliases": [
+      "dice",
+      "dice roller",
+      "roll dice",
+      "d20",
+      "random numbers",
+      "2d6"
+    ]
+  },
+  {
+    "id": "text-adventure",
+    "name": "Text adventure: crashed spaceship",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Games",
+    "file": "cpp/text-adventure.cpp",
+    "summary": "A mini choose-your-path adventure with rooms, an inventory and different endings.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 text-adventure.cpp -o text-adventure and then ./text-adventure.",
+    "aliases": [
+      "text adventure",
+      "adventure game",
+      "choose your own adventure",
+      "story game",
+      "rpg text game"
+    ]
+  },
+  {
+    "id": "pet-class",
+    "name": "Virtual pet (class example)",
+    "lang": "cpp",
+    "kind": "Console",
+    "category": "Basics",
+    "file": "cpp/pet-class.cpp",
+    "summary": "Teaches classes with a Pet you feed, play with and put to sleep for 10 days.",
+    "where": "Paste into an online compiler like onlinegdb.com (C++17), or on your PC run: g++ -std=c++17 pet-class.cpp -o pet-class and then ./pet-class.",
+    "aliases": [
+      "class example",
+      "virtual pet",
+      "tamagotchi",
+      "object oriented",
+      "pet class",
+      "classes"
+    ]
+  },
+  {
+    "id": "ue-rotating-actor",
+    "name": "Rotating actor (Unreal)",
+    "lang": "cpp",
+    "kind": "Unreal",
+    "category": "Unreal",
+    "file": "cpp/ue-rotating-actor.cpp",
+    "summary": "An actor that spins every frame in Tick and can also bob up and down.",
+    "where": "In Unreal Engine 5, use Tools > New C++ Class > Actor named RotatingActor, then paste the RotatingActor.h part into RotatingActor.h and the RotatingActor.cpp part into RotatingActor.cpp. Replace YOURPROJECT_API with your project name in caps + _API (for example SPACEGAME_API), compile, and drag it into your level.",
+    "aliases": [
+      "unreal rotating actor",
+      "spinning actor",
+      "rotate actor",
+      "unreal spin",
+      "ue5 rotate"
+    ]
+  },
+  {
+    "id": "ue-kill-volume",
+    "name": "Kill volume (Unreal)",
+    "lang": "cpp",
+    "kind": "Unreal",
+    "category": "Unreal",
+    "file": "cpp/ue-kill-volume.cpp",
+    "summary": "A trigger box that destroys pawns that overlap it and respawns players at the Player Start.",
+    "where": "In Unreal Engine 5, use Tools > New C++ Class > Actor named KillVolume, then paste the KillVolume.h part into KillVolume.h and the KillVolume.cpp part into KillVolume.cpp. Replace YOURPROJECT_API with your project name in caps + _API (for example SPACEGAME_API), compile, and drag it into your level. Your level needs a Player Start.",
+    "aliases": [
+      "unreal kill volume",
+      "kill zone",
+      "death zone unreal",
+      "ue5 lava",
+      "kill box",
+      "respawn volume"
+    ]
+  },
+  {
+    "id": "ue-moving-platform",
+    "name": "Moving platform (Unreal)",
+    "lang": "cpp",
+    "kind": "Unreal",
+    "category": "Unreal",
+    "file": "cpp/ue-moving-platform.cpp",
+    "summary": "A platform that ping-pongs between its start and a draggable target point, pausing at each end.",
+    "where": "In Unreal Engine 5, use Tools > New C++ Class > Actor named MovingPlatform, then paste the MovingPlatform.h part into MovingPlatform.h and the MovingPlatform.cpp part into MovingPlatform.cpp. Replace YOURPROJECT_API with your project name in caps + _API (for example SPACEGAME_API), compile, and drag it into your level. Drag the Target Offset diamond to set where it travels.",
+    "aliases": [
+      "unreal moving platform",
+      "moving platform ue5",
+      "elevator unreal",
+      "ping pong platform",
+      "lerp platform"
+    ]
+  }
+]

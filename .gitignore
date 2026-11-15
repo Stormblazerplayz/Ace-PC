@@ -1,0 +1,10 @@
+bin/
+obj/
+Updater/bin/
+Updater/obj/
+publish/
+.vs/
+*.user
+*.suo
+NimbusAce-win-x64.zip
+NimbusAce-win-x64.zip.sha256

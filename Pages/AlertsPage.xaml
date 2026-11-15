@@ -1,0 +1,58 @@
+<UserControl x:Class="Nimbus.Pages.AlertsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:Nimbus.Controls">
+  <Grid>
+    <StackPanel x:Name="Root">
+      <DockPanel Margin="0,4,0,12">
+        <c:CrewBuddy x:Name="Nova" DockPanel.Dock="Left" BuddyBrush="{StaticResource NovaBrush}" Size="1.1" Margin="0,0,12,0"/>
+        <Button DockPanel.Dock="Right" Content="Clear all" Style="{StaticResource PillButton}" Margin="0" VerticalAlignment="Center" Click="ClearAll_Click"/>
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock Text="Alerts" Style="{StaticResource PageTitle}"/>
+          <TextBlock x:Name="CountText" Style="{StaticResource SubText}" Text="4 waiting · Nova sorts them for you"/>
+        </StackPanel>
+      </DockPanel>
+
+      <WrapPanel Margin="0,0,0,6">
+        <RadioButton Content="All" Tag="all" GroupName="AlertFilter" IsChecked="True" Style="{StaticResource FilterChip}" Checked="Filter_Checked"/>
+        <RadioButton Content="Builds" Tag="build" GroupName="AlertFilter" Style="{StaticResource FilterChip}" Checked="Filter_Checked"/>
+        <RadioButton Content="Prints" Tag="print" GroupName="AlertFilter" Style="{StaticResource FilterChip}" Checked="Filter_Checked"/>
+        <RadioButton Content="System" Tag="system" GroupName="AlertFilter" Style="{StaticResource FilterChip}" Checked="Filter_Checked"/>
+        <RadioButton Content="Clips" Tag="clip" GroupName="AlertFilter" Style="{StaticResource FilterChip}" Checked="Filter_Checked"/>
+      </WrapPanel>
+
+      <ItemsControl x:Name="AlertList" Focusable="False">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Style="{StaticResource Card}" Margin="0,0,0,8" Padding="0,0,10,0">
+              <Grid MinHeight="58">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="6"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Border Background="{Binding Tone}" CornerRadius="18,0,0,18"/>
+                <StackPanel Grid.Column="1" Margin="14,9,10,9" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="ExtraBold" TextTrimming="CharacterEllipsis"/>
+                  <TextBlock Text="{Binding Detail}" Style="{StaticResource SubText}" Margin="0,2,0,0"/>
+                </StackPanel>
+                <TextBlock Grid.Column="2" Text="{Binding When}" Style="{StaticResource MonoText}" Foreground="{StaticResource MutedBrush}" Margin="0,0,10,0"/>
+                <Button Grid.Column="3" Content="{Binding Action}" Style="{StaticResource SmallPillButton}" VerticalAlignment="Center" Click="Action_Click"/>
+                <Button Grid.Column="4" Style="{StaticResource DismissButton}" ToolTip="Dismiss" Click="Dismiss_Click"/>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+
+    <!-- Shown when there's nothing left -->
+    <StackPanel x:Name="EmptyState" Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center">
+      <c:CrewBuddy x:Name="ChillNova" BuddyBrush="{StaticResource NovaBrush}" Size="1.6"/>
+      <TextBlock Text="All clear" Style="{StaticResource PageTitle}" HorizontalAlignment="Center" Margin="0,10,0,2"/>
+      <TextBlock Text="Nova is chilling until something happens." Style="{StaticResource SubText}" HorizontalAlignment="Center"/>
+    </StackPanel>
+  </Grid>
+</UserControl>
