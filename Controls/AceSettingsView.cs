@@ -3,8 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Nimbus.AceV4;
 using Nimbus.AceV4.Audio;
+using Nimbus.AceV4.Pc;
 using Nimbus.Motion;
 
 namespace Nimbus.Controls
@@ -98,9 +100,15 @@ namespace Nimbus.Controls
             stack.Children.Add(Toggle("Listen for \"Hey Ace\"", c.WakeWord, v => { c.WakeWord = v; Save(); }));
             stack.Children.Add(Toggle("Say answers out loud", c.SpeakReplies, v => { c.SpeakReplies = v; Save(); }));
             stack.Children.Add(Labeled("Dictation", Chips(new[] { ("Auto", "auto"), ("LFM3 Omni", "omni"), ("Windows", "windows") }, c.DictationEngine, v => { c.DictationEngine = v; Save(); })));
-            var hint = AceCardViews.Text("Shortcut: Ctrl+Alt+Space talks to Ace from anywhere.", 11.5, "MutedBrush");
-            hint.Margin = new Thickness(0, 2, 0, 0);
-            stack.Children.Add(hint);
+
+            // ---------------- Shortcuts (global hotkeys: work from any app, even when Ace is minimized)
+            stack.Children.Add(Section("Shortcuts"));
+            stack.Children.Add(HotkeyRow(HotkeyAction.ShowAce, "Open Ace", AceV4Config.DefaultShowHotkey));
+            stack.Children.Add(Toggle("Press it again to hide Ace", c.ShowHotkeyHides, v => { c.ShowHotkeyHides = v; Save(); }));
+            stack.Children.Add(HotkeyRow(HotkeyAction.Talk, "Talk to Ace", AceV4Config.DefaultTalkHotkey));
+            var keysNote = AceCardViews.Text("Click a shortcut, then press the new combo (hold Ctrl, Alt or the Windows key and press a key). Esc cancels. If another app already uses a combo, Ace keeps the one you had.", 11, "MutedBrush");
+            keysNote.Margin = new Thickness(0, 2, 0, 0);
+            stack.Children.Add(keysNote);
 
             // ---------------- You
             stack.Children.Add(Section("You"));
@@ -181,6 +189,131 @@ namespace Nimbus.Controls
             stack.Loaded += (_, _) => Refresh();
             _ = rt.WhenLoaded.ContinueWith(_ => Application.Current?.Dispatcher.BeginInvoke(Refresh));
             return stack;
+        }
+
+        // ===================================================================== Shortcuts
+
+        /// <summary>
+        /// One global shortcut: a button showing the combo (click it, then press the new keys), "Turn off" and
+        /// "Default", and a line saying whether it works or another app already has it.
+        /// </summary>
+        private static FrameworkElement HotkeyRow(HotkeyAction action, string label, string defaultCombo)
+        {
+            var rt = AceRuntime.Current;
+            var panel = new StackPanel { Margin = new Thickness(0, 2, 0, 2) };
+            var row = new WrapPanel();
+            var box = Button("");
+            box.MinWidth = 150;
+            box.ToolTip = "Click, then press the keys you want";
+            var off = Button("Turn off");
+            var reset = Button("Default (" + defaultCombo + ")");
+            row.Children.Add(box);
+            row.Children.Add(off);
+            row.Children.Add(reset);
+            panel.Children.Add(Labeled(label, row));
+            var status = AceCardViews.Text("", 11, "MutedBrush");
+            status.Margin = new Thickness(86, 0, 0, 4);
+            panel.Children.Add(status);
+
+            bool recording = false;
+            string flash = "";
+
+            void Show()
+            {
+                string now = rt.HotkeyText(action);
+                box.Content = recording ? "Press the keys…" : (now.Length > 0 ? now : "Off (click to set)");
+                off.IsEnabled = !recording && now.Length > 0;
+                reset.IsEnabled = !recording && now != defaultCombo;
+                status.Text = recording ? "Hold Ctrl, Alt or the Windows key and press a key. Esc cancels."
+                            : flash.Length > 0 ? flash : rt.HotkeyStatus(action);
+            }
+
+            void Apply(string text)
+            {
+                rt.Hotkeys.Resume();
+                var (ok, message) = rt.SetHotkey(action, text);
+                flash = message;
+                Show();
+                if (ok) { rt.Play(Sfx.Success, 0.7); Spring.Bump(box); }
+                else rt.Play(Sfx.Error, 0.7);
+            }
+
+            void Stop()
+            {
+                if (!recording) return;
+                recording = false;
+                box.PreviewKeyDown -= OnKey;
+                box.LostKeyboardFocus -= OnLost;
+                rt.Hotkeys.Resume();
+                Show();
+            }
+
+            void OnLost(object sender, KeyboardFocusChangedEventArgs e) => Stop();
+
+            void OnKey(object sender, KeyEventArgs e)
+            {
+                e.Handled = true;
+                Key key = e.Key == Key.System ? e.SystemKey : e.Key == Key.ImeProcessed ? e.ImeProcessedKey : e.Key;
+                var mods = Keyboard.Modifiers;
+                if (key == Key.Escape && mods == ModifierKeys.None) { flash = ""; Stop(); return; }
+                if (key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt or Key.LeftShift or Key.RightShift or Key.LWin or Key.RWin or Key.None or Key.DeadCharProcessed)
+                {
+                    // Only modifiers so far: show them while you hold them.
+                    string held = ModifierText(mods);
+                    box.Content = held.Length > 0 ? held + "+…" : "Press the keys…";
+                    return;
+                }
+                uint vk = (uint)KeyInterop.VirtualKeyFromKey(key);
+                uint m = 0;
+                if ((mods & ModifierKeys.Control) != 0) m |= HotkeyCombo.Ctrl;
+                if ((mods & ModifierKeys.Alt) != 0) m |= HotkeyCombo.Alt;
+                if ((mods & ModifierKeys.Shift) != 0) m |= HotkeyCombo.Shift;
+                if ((mods & ModifierKeys.Windows) != 0) m |= HotkeyCombo.Win;
+                var combo = new HotkeyCombo(m, vk);
+                string problem = combo.Problem();
+                if (problem.Length > 0)
+                {
+                    // Keep listening so you can try another combo right away.
+                    status.Text = problem;
+                    box.Content = combo + "?";
+                    rt.Play(Sfx.Error, 0.6);
+                    return;
+                }
+                recording = false;
+                box.PreviewKeyDown -= OnKey;
+                box.LostKeyboardFocus -= OnLost;
+                Apply(combo.ToString());   // SetHotkey turns the other shortcuts back on first
+            }
+
+            box.Click += (_, _) =>
+            {
+                if (recording) return;
+                recording = true;
+                flash = "";
+                rt.Hotkeys.Suspend();   // so pressing the current combo doesn't open/hide Ace while you set it
+                box.PreviewKeyDown += OnKey;
+                box.LostKeyboardFocus += OnLost;
+                Keyboard.Focus(box);
+                Show();
+            };
+            off.Click += (_, _) => { Stop(); Apply(""); };
+            reset.Click += (_, _) => { Stop(); Apply(defaultCombo); };
+
+            Action changed = () => Application.Current?.Dispatcher.BeginInvoke(() => { if (!recording) Show(); });
+            panel.Loaded += (_, _) => { rt.Hotkeys.Changed -= changed; rt.Hotkeys.Changed += changed; flash = ""; Show(); };
+            panel.Unloaded += (_, _) => { rt.Hotkeys.Changed -= changed; Stop(); };
+            Show();
+            return panel;
+        }
+
+        private static string ModifierText(ModifierKeys mods)
+        {
+            var parts = new System.Collections.Generic.List<string>();
+            if ((mods & ModifierKeys.Control) != 0) parts.Add("Ctrl");
+            if ((mods & ModifierKeys.Alt) != 0) parts.Add("Alt");
+            if ((mods & ModifierKeys.Shift) != 0) parts.Add("Shift");
+            if ((mods & ModifierKeys.Windows) != 0) parts.Add("Win");
+            return string.Join("+", parts);
         }
 
         // ===================================================================== Bits

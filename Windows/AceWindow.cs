@@ -27,7 +27,7 @@ namespace Nimbus.Overlay
     /// <summary>
     /// Ace for PC, laid out like the iPad app: the orb sits high in the middle of the top bar, the chat is under it
     /// and the "Talk to Ace" bar is at the bottom. Click the orb for Settings, hold it (or press Ctrl+Alt+Space)
-    /// to talk, or say "Hey Ace". The calendar is on the left of the orb and "check my PC" on the right.
+    /// to talk, or say "Hey Ace". Ctrl+Alt+A opens Ace from any app (both shortcuts can be changed in Settings). The calendar is on the left of the orb and "check my PC" on the right.
     /// </summary>
     public sealed class AceWindow : Window
     {
@@ -206,7 +206,7 @@ namespace Nimbus.Overlay
             field.Children.Add(_input);
             field.Children.Add(_placeholder);
 
-            _mic = CircleButton("", "Talk: click, talk, it stops when you stop (Ctrl+Alt+Space)", 34, transparent: true);
+            _mic = CircleButton("", TalkTip(), 34, transparent: true);
             _micGlyph = (TextBlock)_mic.Content;
             _mic.Click += (_, _) => _ = _rt.ListenAndAskAsync("mic", showOnStage: false);
             _send = CircleButton("", "Send (Enter)", 34, transparent: false);
@@ -297,6 +297,7 @@ namespace Nimbus.Overlay
             FocusTimer.Changed += () => Dispatcher.BeginInvoke(RefreshTimers);
             CalendarStore.Changed += () => Dispatcher.BeginInvoke(() => { if (_sheetName == "calendar") OpenSheet("calendar"); });
             Hub.NavigateRequested += OnNavigate;
+            _rt.ShowRequested += OnShowShortcut;
 
             _tick.Tick += (_, _) => OnTick();
             _tick.Start();
@@ -326,6 +327,7 @@ namespace Nimbus.Overlay
             {
                 _tick.Stop();
                 Hub.NavigateRequested -= OnNavigate;
+                _rt.ShowRequested -= OnShowShortcut;
             };
             PreviewKeyDown += OnKey;
             SizeChanged += (_, _) => { if (_sheetLayer.Visibility == Visibility.Visible) _sheet.MaxHeight = Math.Max(300, ActualHeight - 70); };
@@ -702,7 +704,7 @@ namespace Nimbus.Overlay
             _micGlyph.Text = on ? "" : "";
             _mic.Background = on ? new SolidColorBrush(AceOrb.C(0xFF5A4E)) : Brushes.Transparent;
             _micGlyph.Foreground = on ? Brushes.White : new SolidColorBrush(AceOrb.WithA(AceOrb.Fg, 0.8));
-            _mic.ToolTip = on ? "Stop listening" : "Talk: click, talk, it stops when you stop (Ctrl+Alt+Space)";
+            _mic.ToolTip = on ? "Stop listening" : TalkTip();
         }
 
         private void UpdateSend()
@@ -1023,6 +1025,34 @@ namespace Nimbus.Overlay
                     case "memories": OpenSheet("memories"); break;
                 }
             });
+        }
+
+        /// <summary>
+        /// The "open Ace" shortcut (Ctrl+Alt+A unless you changed it), pressed in any app: brings Ace to the front with
+        /// the cursor in the Talk to Ace box, even when it's minimized or behind other windows. Pressed while Ace is
+        /// already in front, it hides Ace again (unless that's turned off in Settings).
+        /// </summary>
+        public void OnShowShortcut()
+        {
+            if (!Dispatcher.CheckAccess()) { Dispatcher.BeginInvoke(OnShowShortcut); return; }
+            var hwnd = new WindowInteropHelper(this).Handle;
+            bool inFront = IsVisible && WindowState != WindowState.Minimized && hwnd != IntPtr.Zero && Win32.GetForegroundWindow() == hwnd;
+            if (inFront && _rt.Config.ShowHotkeyHides)
+            {
+                WindowState = WindowState.Minimized;
+                return;
+            }
+            BringBack();
+            // Windows lets the app that got the shortcut take the front, but if something still sits on top, push through.
+            if (hwnd != IntPtr.Zero && Win32.GetForegroundWindow() != hwnd) Win32.ForceForeground(hwnd);
+            Keyboard.Focus(_input);
+            _input.CaretIndex = _input.Text.Length;
+        }
+
+        private string TalkTip()
+        {
+            string key = _rt.HotkeyText(HotkeyAction.Talk);
+            return "Talk: click, talk, it stops when you stop" + (key.Length > 0 ? $" ({key})" : "");
         }
 
         /// <summary>Shows the window again (from the taskbar, the Start menu or a second start of Ace).</summary>

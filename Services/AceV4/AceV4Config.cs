@@ -46,6 +46,16 @@ namespace Nimbus.AceV4
         /// <summary>Ace's sounds follow its eyes left and right.</summary>
         public bool SpatialSound { get; set; } = true;
 
+        // ---- Shortcuts (work from anywhere in Windows, see Pc/GlobalHotkeys.cs) ----
+        public const string DefaultShowHotkey = "Ctrl+Alt+A";
+        public const string DefaultTalkHotkey = "Ctrl+Alt+Space";
+        /// <summary>Opens Ace or brings it to the front from any app, like "Ctrl+Alt+A". Empty = off.</summary>
+        public string ShowHotkey { get; set; } = DefaultShowHotkey;
+        /// <summary>Starts listening from any app, like holding the orb. Empty = off.</summary>
+        public string TalkHotkey { get; set; } = DefaultTalkHotkey;
+        /// <summary>Pressing the open shortcut while Ace is already in front hides it again (minimizes it).</summary>
+        public bool ShowHotkeyHides { get; set; } = true;
+
         // ---- Sounds ----
         public bool Sounds { get; set; } = true;
         /// <summary>0 to 1.</summary>
@@ -107,7 +117,18 @@ namespace Nimbus.AceV4
             c.AwayMinutes = Math.Clamp(c.AwayMinutes, 1, 120);
             c.FocusMinutes = Math.Clamp(c.FocusMinutes, 5, 120);
             if (string.IsNullOrWhiteSpace(c.UserName)) c.UserName = "Storm";
+            c.ShowHotkey = CleanHotkey(c.ShowHotkey, DefaultShowHotkey);
+            c.TalkHotkey = CleanHotkey(c.TalkHotkey, DefaultTalkHotkey);
+            if (c.ShowHotkey.Length > 0 && c.ShowHotkey == c.TalkHotkey) c.TalkHotkey = c.ShowHotkey == DefaultTalkHotkey ? "" : DefaultTalkHotkey;
             return c;
+        }
+
+        /// <summary>A shortcut from the file, written the way Ace writes it ("ctrl+alt+a" becomes "Ctrl+Alt+A"). Empty stays off; a broken one goes back to the default.</summary>
+        internal static string CleanHotkey(string? text, string fallback)
+        {
+            if (text == null) return fallback;
+            if (Nimbus.AceV4.Pc.HotkeyCombo.TryParse(text, out var combo, out _)) return combo.ToString();
+            return fallback;
         }
 
         public void Save()
