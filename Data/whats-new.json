@@ -1,4 +1,18 @@
 {
+ "4.3.0": [
+  {
+   "title": "Open Ace from anywhere",
+   "text": "Press Ctrl+Alt+A in any app and I jump to the front, ready to type, even when I'm minimized. Press it again to hide me."
+  },
+  {
+   "title": "Pick your own shortcuts",
+   "text": "Click the orb > Settings > Shortcuts, click a shortcut and press the keys you want. Works for the talk shortcut (Ctrl+Alt+Space) too. If another app already uses a combo, I tell you and keep the one you had."
+  },
+  {
+   "title": "Just ask",
+   "text": "Say \"what's my shortcut\" or \"change my shortcut to Ctrl+Shift+A\"."
+  }
+ ],
  "4.2.0": [
   {
    "title": "No more pop-up",

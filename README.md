@@ -12,6 +12,7 @@ Everything Ace saves stays on your PC, in `%LOCALAPPDATA%\Nimbus` (the folder na
 | **Click the orb** | Opens Settings: pick the brain (**Normal Ace** or **LFM3 Omni**), the "ask LFM3 Omni when Ace doesn't know" switch, auto-update, beta updates, sounds, voice and more. |
 | **Hold the orb** (or press **Ctrl+Alt+Space** anywhere) | Ace listens. Let go of the orb, or just stop talking, and it answers out loud. |
 | **Say "Hey Ace"** | Same as holding the orb (turn it on in Settings > Voice). |
+| **Ctrl+Alt+A** anywhere | Opens Ace from any app, even when it's minimized: it jumps to the front with the cursor in "Talk to Ace". Press it again to hide Ace. Change it (or the talk shortcut) in Settings > Shortcuts: click the shortcut and press the new keys. If another app already uses a combo, Ace says so and keeps the one you had. You can also say "change my shortcut to Ctrl+Shift+A". |
 | **Calendar button** (left of the orb) | Today and the next 7 days, plus your reminders. |
 | **Heart button** (right of the orb) | "Check my PC": CPU, memory, temps, storage, apps and more. |
 | **+ button** | Quick things to ask, the Scripts library, What I remember, Calendar and Settings. |
@@ -62,6 +63,7 @@ Ace checks **github.com/Stormblazerplayz/Ace-PC** for a new release when it star
 | Wakes up every 15-30 min | The orb stretches into a pill and its eyes look around while it checks: CPU, RAM, GPU, temps, time, open apps (and frozen ones), notifications, new documents, files sitting in Downloads, disk space, big files, battery, calendar, screen on/off and if you're away. If all is fine it says so and goes back to a plain orb. If you're away or gaming full screen, it saves what it found and tells you when you're back. |
 | Greets you | The first time you use your PC each day: hi, today's calendar, reminders, weather and anything it found while you were away. |
 | Bedtime | Learns when you usually stop and start using your PC, then suggests a bedtime (goal: 9.5 hours, change it in settings). Nudges you when it's late. |
+| Shortcuts | Ctrl+Alt+A opens Ace and Ctrl+Alt+Space talks to it, from any app. Change or turn off either one in Settings > Shortcuts, or ask: "what's my shortcut", "change my shortcut to Ctrl+Shift+A", "set the talk shortcut to Alt+F2", "turn off the talk shortcut", "reset my shortcuts". |
 | Voice | Mic button, Ctrl+Alt+Space or "Hey Ace". Stops listening when you stop talking. Uses LFM3 Omni if it's running, otherwise Windows dictation (offline). |
 | Thinking | Up to 8 passes: rules, a math and units solver, an intent net, the meaning net over 4,051 Q&A topics (18,131 ways to ask), breaking questions into parts, comparing things, web research across several sites, double-checking against the web, then Omni if it's running. Tap "Thought in N steps" to see how it got there. |
 | Learns | "Remember that my dog's name is Max", "no, it's actually..." corrections, and good web answers get saved. |

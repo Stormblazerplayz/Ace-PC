@@ -25,8 +25,8 @@ namespace Nimbus.AceV4
 
     /// <summary>
     /// Keeps Ace V4 alive in the background: wakes every 15-30 minutes (random) to check the PC, greets you the
-    /// first time you use the PC each day, nudges you toward bed, fires reminders, listens for "Hey Ace" and
-    /// Ctrl+Alt+Space, and plays the sounds. The Ace window listens to it.
+    /// first time you use the PC each day, nudges you toward bed, fires reminders, listens for "Hey Ace", owns the
+    /// global shortcuts (open Ace and talk to Ace from any app), and plays the sounds. The Ace window listens to it.
     /// </summary>
     public sealed class AceRuntime : IDisposable
     {
@@ -39,6 +39,11 @@ namespace Nimbus.AceV4
         public AceSpeech Speech { get; } = new();
         public Dictation Dictation { get; } = new();
         public WakeWord WakeWord { get; } = new();
+        /// <summary>The global shortcuts: open Ace (Ctrl+Alt+A) and talk to Ace (Ctrl+Alt+Space), both changeable in Settings.</summary>
+        public GlobalHotkeys Hotkeys { get; } = new();
+
+        /// <summary>The "open Ace" shortcut was pressed (on the UI thread). The Ace window shows itself, or hides if it's already in front.</summary>
+        public event Action? ShowRequested;
 
         /// <summary>For the Ace window (orb moods, status and answers).</summary>
         public event Action<StageEvent>? Stage;
@@ -64,7 +69,7 @@ namespace Nimbus.AceV4
         private DateTime _lastActivitySave = DateTime.MinValue;
         private HwndSource? _hwnd;
         private IntPtr _powerNotify;
-        private const int HotkeyId = 0x4ACE;
+        private bool _hotkeyProblemSaid;
         private CancellationTokenSource? _listenCts;
 
         public Task WhenLoaded => _loaded.Task;
@@ -136,14 +141,23 @@ namespace Nimbus.AceV4
             catch (Exception ex) { Debug.WriteLine("Ace what's new: " + ex.Message); }
         }
 
-        /// <summary>Hooks the main window for the Ctrl+Alt+Space hotkey and screen on/off messages.</summary>
+        /// <summary>Hooks the main window for the global shortcuts and screen on/off messages.</summary>
         public void AttachWindow(Window window)
         {
             var helper = new WindowInteropHelper(window);
             if (helper.Handle == IntPtr.Zero) return;
             _hwnd = HwndSource.FromHwnd(helper.Handle);
             _hwnd?.AddHook(WndProc);
-            try { Win32.RegisterHotKey(helper.Handle, HotkeyId, Win32.MOD_CONTROL | Win32.MOD_ALT | Win32.MOD_NOREPEAT, (uint)Win32.VK_SPACE); } catch { }
+            try
+            {
+                Hotkeys.Pressed -= OnHotkey;
+                Hotkeys.Pressed += OnHotkey;
+                Hotkeys.Changed -= OnHotkeysChanged;
+                Hotkeys.Changed += OnHotkeysChanged;
+                Hotkeys.Attach(helper.Handle, WantedHotkeys());
+                _ = Task.Run(SayIfHotkeyTakenAsync);
+            }
+            catch (Exception ex) { Debug.WriteLine("Ace shortcuts: " + ex.Message); }
             try
             {
                 var guid = Win32.GUID_CONSOLE_DISPLAY_STATE;
@@ -154,10 +168,9 @@ namespace Nimbus.AceV4
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (msg == Win32.WM_HOTKEY && wParam.ToInt32() == HotkeyId)
+            if (Hotkeys.HandleMessage(msg, wParam))
             {
                 handled = true;
-                _ = ListenAndAskAsync("hotkey");
             }
             else if (msg == Win32.WM_POWERBROADCAST && wParam.ToInt32() == Win32.PBT_POWERSETTINGCHANGE && lParam != IntPtr.Zero)
             {
@@ -180,6 +193,90 @@ namespace Nimbus.AceV4
                 catch { }
             }
             return IntPtr.Zero;
+        }
+
+        // ===================================================================== Global shortcuts
+
+        private Dictionary<HotkeyAction, HotkeyCombo> WantedHotkeys()
+        {
+            var d = new Dictionary<HotkeyAction, HotkeyCombo>();
+            d[HotkeyAction.ShowAce] = HotkeyCombo.TryParse(Config.ShowHotkey, out var show, out _) ? show : HotkeyCombo.None;
+            d[HotkeyAction.Talk] = HotkeyCombo.TryParse(Config.TalkHotkey, out var talk, out _) ? talk : HotkeyCombo.None;
+            return d;
+        }
+
+        private void OnHotkey(HotkeyAction action)
+        {
+            switch (action)
+            {
+                case HotkeyAction.ShowAce:
+                    try { ShowRequested?.Invoke(); } catch (Exception ex) { Debug.WriteLine("Ace open shortcut: " + ex.Message); }
+                    break;
+                case HotkeyAction.Talk:
+                    _ = ListenAndAskAsync("hotkey");
+                    break;
+            }
+        }
+
+        private void OnHotkeysChanged() => Changed?.Invoke();
+
+        /// <summary>The shortcut text Settings shows ("Ctrl+Alt+A"), or "" when it's off.</summary>
+        public string HotkeyText(HotkeyAction action) => action == HotkeyAction.ShowAce ? Config.ShowHotkey : Config.TalkHotkey;
+
+        /// <summary>Is the shortcut on, off, or taken by another app? (One line for Settings.)</summary>
+        public string HotkeyStatus(HotkeyAction action) => OnUi(() => Hotkeys.StatusText(action));
+
+        /// <summary>
+        /// Changes a global shortcut ("Ctrl+Shift+A", or "" / "off" to turn it off). It only saves if Windows lets Ace
+        /// have the new combo, so you never end up with a shortcut that doesn't work. Safe to call from any thread.
+        /// </summary>
+        public (bool Ok, string Message) SetHotkey(HotkeyAction action, string text, bool save = true)
+        {
+            if (!HotkeyCombo.TryParse(text, out var combo, out string problem)) return (false, problem);
+            return OnUi(() =>
+            {
+                var result = Hotkeys.Set(action, combo, out string message);
+                bool ok = result is GlobalHotkeys.Result.Ok or GlobalHotkeys.Result.Off or GlobalHotkeys.Result.NoWindow;
+                if (ok)
+                {
+                    string value = combo.ToString();
+                    if (action == HotkeyAction.ShowAce) Config.ShowHotkey = value; else Config.TalkHotkey = value;
+                    if (save) Config.Save();
+                    Changed?.Invoke();
+                }
+                return (ok, message);
+            });
+        }
+
+        private static T OnUi<T>(Func<T> work)
+        {
+            var d = Application.Current?.Dispatcher;
+            if (d == null || d.CheckAccess()) return work();
+            return d.Invoke(work);
+        }
+
+        /// <summary>If a shortcut was taken by another app when Ace started, Ace says so once (in the chat), with how to fix it.</summary>
+        private async Task SayIfHotkeyTakenAsync()
+        {
+            try
+            {
+                await _loaded.Task.ConfigureAwait(false);
+                await Task.Delay(9000).ConfigureAwait(false);   // after the greeting and "What's new"
+                if (_hotkeyProblemSaid) return;
+                var taken = OnUi(() => Enum.GetValues<HotkeyAction>()
+                    .Select(a => Hotkeys[a])
+                    .Where(s => !s.Working && !s.Wanted.IsNone && s.LastError == GlobalHotkeys.ErrorHotkeyAlreadyRegistered)
+                    .Select(s => $"{s.Wanted} (to {GlobalHotkeys.Describe(s.Action)})")
+                    .ToList());
+                if (taken.Count == 0) return;
+                _hotkeyProblemSaid = true;
+                string list = string.Join(" and ", taken);
+                var a = AceAnswer.Say($"Heads up: another app is already using {list}, so that shortcut isn't working right now. " +
+                                      "You can pick a different one in Settings > Shortcuts, or say \"change my shortcut to Ctrl+Shift+A\".", "hotkey", 1);
+                Raise(new StageEvent(StageKind.Answer, "", a));
+                Answered?.Invoke("", a);
+            }
+            catch (Exception ex) { Debug.WriteLine("Ace shortcut check: " + ex.Message); }
         }
 
         private void OnSessionSwitch(object? sender, SessionSwitchEventArgs e)
@@ -981,7 +1078,7 @@ namespace Nimbus.AceV4
                 SystemEvents.PowerModeChanged -= OnPowerMode;
                 if (_hwnd != null)
                 {
-                    Win32.UnregisterHotKey(_hwnd.Handle, HotkeyId);
+                    Hotkeys.Dispose();
                     if (_powerNotify != IntPtr.Zero) Win32.UnregisterPowerSettingNotification(_powerNotify);
                     _hwnd.RemoveHook(WndProc);
                 }

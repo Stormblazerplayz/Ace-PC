@@ -21,6 +21,7 @@ and you can uninstall it from Settings > Apps. Otherwise, follow these steps for
 HOW TO USE ACE
 - Type in "Talk to Ace" at the bottom and press Enter.
 - Click the orb for Settings (pick Normal Ace or LFM3 Omni, updates, voice and more).
+- Press Ctrl+Alt+A in any app to open Ace (press it again to hide it). Change it in Settings > Shortcuts.
 - Hold the orb to talk, or press Ctrl+Alt+Space anywhere, or say "Hey Ace" (turn it on in Settings).
 - The calendar button is left of the orb, "check my PC" is right of it.
 
